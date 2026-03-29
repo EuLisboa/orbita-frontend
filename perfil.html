@@ -31,7 +31,6 @@
       gap: 24px; align-items: start;
     }
 
-    /* SIDEBAR */
     .sidebar {
       display: flex; flex-direction: column; gap: 16px;
       position: sticky; top: 80px;
@@ -63,7 +62,10 @@
 
     .profile-body { padding: 0 20px 20px; }
 
-    .avatar-wrap { margin-top: -32px; margin-bottom: 12px; position: relative; display: inline-block; }
+    .avatar-wrap {
+      margin-top: -32px; margin-bottom: 12px;
+      position: relative; display: inline-block;
+    }
 
     .avatar-main {
       width: 64px; height: 64px; border-radius: 50%;
@@ -83,18 +85,17 @@
     }
 
     .profile-handle { font-size: 0.8rem; color: var(--muted); margin-bottom: 10px; }
-
-    .profile-bio {
-      font-size: 0.85rem; color: var(--muted);
-      line-height: 1.6; margin-bottom: 14px;
-      min-height: 40px;
-    }
-
+    .profile-bio { font-size: 0.85rem; color: var(--muted); line-height: 1.6; margin-bottom: 14px; min-height: 40px; }
     .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
-
     .divider { height: 1px; background: var(--border); margin: 14px 0; }
 
-    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; text-align: center; }
+    .stats {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 4px; text-align: center;
+    }
+
+    .stat-item { cursor: pointer; padding: 4px; border-radius: 8px; transition: background 0.2s; }
+    .stat-item:hover { background: var(--surface2); }
     .stat-num { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; }
     .stat-label { font-size: 0.7rem; color: var(--muted); }
 
@@ -110,8 +111,10 @@
     .btn-action.primary:hover { box-shadow: 0 4px 16px rgba(232,255,90,0.2); transform: translateY(-1px); }
     .btn-action.outline { background: transparent; color: var(--muted); border: 1px solid var(--border); }
     .btn-action.outline:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+    .btn-action.danger { background: transparent; color: var(--accent3); border: 1px solid rgba(255,90,138,0.3); }
+    .btn-action.danger:hover { background: rgba(255,90,138,0.1); }
 
-    /* MODAL DE EDITAR PERFIL */
+    /* MODAL */
     .modal-overlay {
       position: fixed; inset: 0;
       background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
@@ -147,10 +150,28 @@
     .modal-close:hover { color: var(--text); }
     .modal-body { padding: 24px; }
 
+    /* LISTA DE SEGUIDORES NO MODAL */
+    .user-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+      cursor: pointer; transition: all 0.2s;
+    }
+
+    .user-item:last-child { border-bottom: none; }
+    .user-item:hover { opacity: 0.8; }
+
+    .user-item-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--surface2); display: flex;
+      align-items: center; justify-content: center; font-size: 1rem;
+    }
+
+    .user-item-nome { font-family: var(--font-display); font-size: 0.88rem; font-weight: 600; }
+    .user-item-handle { font-size: 0.75rem; color: var(--muted); }
+
     /* CONTEÚDO PRINCIPAL */
     .main-content { display: flex; flex-direction: column; gap: 16px; }
 
-    /* CAIXA DE NOVO POST */
     .post-box {
       background: var(--surface); border: 1px solid var(--border);
       border-radius: var(--radius); padding: 18px;
@@ -192,7 +213,6 @@
 
     .post-submit:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* POSTS */
     .post-card {
       background: var(--surface); border: 1px solid var(--border);
       border-radius: var(--radius); padding: 18px;
@@ -200,12 +220,10 @@
     }
 
     .post-card:hover { border-color: rgba(255,255,255,0.1); }
-
     .post-text { font-size: 0.88rem; line-height: 1.7; color: #d0d0d0; margin-bottom: 14px; white-space: pre-wrap; }
 
     .post-meta-row {
-      display: flex; align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       font-size: 0.75rem; color: var(--muted);
       padding-top: 12px; border-top: 1px solid var(--border);
     }
@@ -238,7 +256,6 @@
 </head>
 <body>
 
-  <!-- NAVBAR -->
   <nav>
     <div class="nav-inner">
       <a href="index.html" class="logo">
@@ -246,14 +263,13 @@
         Orbita
       </a>
       <div class="nav-actions">
-        <a href="feed.html"        class="nav-btn">🏠 Feed</a>
+        <a href="feed.html" class="nav-btn">🏠 Feed</a>
         <a href="comunidades.html" class="nav-btn">🌐 Comunidades</a>
         <button class="nav-btn primary" onclick="Orbita.auth.logout()">Sair</button>
       </div>
     </div>
   </nav>
 
-  <!-- LAYOUT -->
   <div class="page">
 
     <!-- SIDEBAR -->
@@ -268,33 +284,30 @@
             <div class="avatar-status"></div>
           </div>
 
-          <div class="profile-name"  id="perfil-nome">Carregando...</div>
+          <div class="profile-name"   id="perfil-nome">Carregando...</div>
           <div class="profile-handle" id="perfil-handle"></div>
-          <div class="profile-bio"   id="perfil-bio"></div>
-
-          <div class="tags" id="perfil-tags"></div>
+          <div class="profile-bio"    id="perfil-bio"></div>
+          <div class="tags"           id="perfil-tags"></div>
 
           <div class="divider"></div>
 
           <div class="stats">
-            <div>
-              <div class="stat-num" id="stat-posts">0</div>
+            <div class="stat-item" onclick="abrirSeguidores()">
+              <div class="stat-num"   id="stat-posts">0</div>
               <div class="stat-label">Posts</div>
             </div>
-            <div>
-              <div class="stat-num" id="stat-seguidores">0</div>
+            <div class="stat-item" onclick="abrirSeguidores()">
+              <div class="stat-num"   id="stat-seguidores">0</div>
               <div class="stat-label">Seguidores</div>
             </div>
-            <div>
-              <div class="stat-num" id="stat-seguindo">0</div>
+            <div class="stat-item" onclick="abrirSeguindo()">
+              <div class="stat-num"   id="stat-seguindo">0</div>
               <div class="stat-label">Seguindo</div>
             </div>
           </div>
 
-          <div class="profile-actions">
-            <button class="btn-action primary" onclick="abrirModalEditar()">✏️ Editar</button>
-            <button class="btn-action outline" onclick="Orbita.auth.logout()">Sair</button>
-          </div>
+          <!-- Botões mudam conforme é seu perfil ou de outro -->
+          <div class="profile-actions" id="profile-actions"></div>
         </div>
       </div>
     </aside>
@@ -302,8 +315,8 @@
     <!-- CONTEÚDO -->
     <main class="main-content">
 
-      <!-- Caixa de post -->
-      <div class="post-box">
+      <!-- Caixa de post — só aparece no próprio perfil -->
+      <div class="post-box" id="post-box" style="display:none">
         <div class="post-input-row">
           <div class="post-avatar-sm" id="post-avatar">🙂</div>
           <textarea
@@ -314,14 +327,12 @@
           ></textarea>
         </div>
         <div class="post-bottom">
-          <button class="post-submit" id="btn-publicar"
-                  onclick="publicarPost()" disabled>
+          <button class="post-submit" id="btn-publicar" onclick="publicarPost()" disabled>
             Publicar →
           </button>
         </div>
       </div>
 
-      <!-- Posts do usuário -->
       <div id="posts-lista"></div>
 
     </main>
@@ -329,39 +340,47 @@
 
 
   <!-- MODAL: EDITAR PERFIL -->
-  <div class="modal-overlay" id="modal-editar" onclick="fecharModalSeOverlay(event)">
+  <div class="modal-overlay" id="modal-editar" onclick="fecharModalSeOverlay(event, 'modal-editar')">
     <div class="modal">
       <div class="modal-header">
         <div class="modal-title">✏️ Editar perfil</div>
-        <button class="modal-close" onclick="fecharModal()">✕</button>
+        <button class="modal-close" onclick="fecharModal('modal-editar')">✕</button>
       </div>
       <div class="modal-body">
-
         <div class="field">
           <label for="edit-nome">Nome</label>
           <input type="text" id="edit-nome" placeholder="Seu nome"/>
         </div>
-
         <div class="field">
           <label for="edit-bio">Bio</label>
           <textarea id="edit-bio" placeholder="Fale sobre você..." style="min-height:80px; resize:none"></textarea>
         </div>
-
         <div class="field">
           <label for="edit-cidade">Cidade</label>
           <input type="text" id="edit-cidade" placeholder="Ex: São Paulo, BR"/>
         </div>
-
         <div class="field">
           <label for="edit-avatar">Avatar (emoji)</label>
           <input type="text" id="edit-avatar" placeholder="Ex: 🧑‍💻" maxlength="4"/>
         </div>
-
         <div style="display:flex; gap:10px; margin-top:24px">
-          <button class="btn-action outline" style="flex:1" onclick="fecharModal()">Cancelar</button>
+          <button class="btn-action outline" style="flex:1" onclick="fecharModal('modal-editar')">Cancelar</button>
           <button class="btn-action primary" style="flex:2" onclick="salvarPerfil()">Salvar →</button>
         </div>
+      </div>
+    </div>
+  </div>
 
+
+  <!-- MODAL: SEGUIDORES / SEGUINDO -->
+  <div class="modal-overlay" id="modal-lista" onclick="fecharModalSeOverlay(event, 'modal-lista')">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-lista-titulo">Seguidores</div>
+        <button class="modal-close" onclick="fecharModal('modal-lista')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="modal-lista-conteudo"></div>
       </div>
     </div>
   </div>
@@ -375,59 +394,124 @@
       window.location.href = 'login.html';
     }
 
-    const token  = Orbita.store.ler('token');
-    let   perfil = null; // dados do usuário carregados da API
+    const token       = Orbita.store.ler('token');
+    const euUsuario   = Orbita.auth.usuario();
+
+    // ==========================================
+    // Descobre qual perfil mostrar
+    // Se a URL tiver ?usuario=handle, mostra aquele perfil
+    // Se não, mostra o perfil do usuário logado
+    // ==========================================
+    const params       = new URLSearchParams(window.location.search);
+    const handleAlvo   = params.get('usuario') || euUsuario?.handle;
+    const ehMeuPerfil  = handleAlvo === euUsuario?.handle;
+
+    let perfilAtual = null;
 
 
     // ==========================================
     // FUNÇÃO: carregarPerfil()
-    // Busca os dados do usuário logado na API
     // ==========================================
     async function carregarPerfil() {
       try {
-        const resposta = await fetch(`${API_URL}/api/auth/eu`, {
-          headers: { 'Authorization': `Bearer ${token}` },
+        const resposta = await fetch(`${API_URL}/api/usuarios/${handleAlvo}`, {
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {},
         });
 
         const dados = await resposta.json();
+        if (!resposta.ok) throw new Error(dados.erro);
 
-        if (!resposta.ok) {
-          Orbita.toast('Erro ao carregar perfil', 'error');
-          return;
-        }
-
-        perfil = dados.usuario;
-        renderizarPerfil(perfil);
-        carregarPosts(perfil.handle);
+        perfilAtual = dados.usuario;
+        renderizarPerfil(perfilAtual);
+        carregarPosts(handleAlvo);
 
       } catch (e) {
-        Orbita.toast('Servidor offline', 'error');
+        Orbita.toast('Erro ao carregar perfil', 'error');
       }
     }
 
 
     // ==========================================
-    // FUNÇÃO: renderizarPerfil(usuario)
-    // Preenche os elementos da sidebar com
-    // os dados reais do usuário
+    // FUNÇÃO: renderizarPerfil(u)
     // ==========================================
     function renderizarPerfil(u) {
       document.getElementById('perfil-avatar').textContent  = u.avatar  || '🙂';
-      document.getElementById('post-avatar').textContent    = u.avatar  || '🙂';
       document.getElementById('perfil-nome').textContent    = u.nome;
-      document.getElementById('perfil-handle').textContent  = `@${u.handle} · ${u.cidade || 'Sem cidade'}`;
-      document.getElementById('perfil-bio').textContent     = u.bio || 'Sem bio ainda. Clique em Editar para adicionar!';
-      document.getElementById('stat-seguidores').textContent = '0';
-      document.getElementById('stat-seguindo').textContent   = '0';
+      document.getElementById('perfil-handle').textContent  = `@${u.handle}${u.cidade ? ' · ' + u.cidade : ''}`;
+      document.getElementById('perfil-bio').textContent     = u.bio || 'Sem bio ainda.';
+      document.getElementById('stat-seguidores').textContent = u.total_seguidores || 0;
+      document.getElementById('stat-seguindo').textContent   = u.total_seguindo   || 0;
 
-      // Atualiza o título da página
       document.title = `Orbita — ${u.nome}`;
+
+      // Botões diferentes conforme o perfil
+      const actions = document.getElementById('profile-actions');
+
+      if (ehMeuPerfil) {
+        // Meu perfil — botão de editar
+        document.getElementById('post-box').style.display  = 'block';
+        document.getElementById('post-avatar').textContent = u.avatar || '🙂';
+
+        actions.innerHTML = `
+          <button class="btn-action primary" onclick="abrirModalEditar()">✏️ Editar</button>
+          <button class="btn-action outline" onclick="Orbita.auth.logout()">Sair</button>
+        `;
+      } else {
+        // Perfil de outro usuário — botão de seguir
+        const seguindo = u.estouSeguindo;
+        actions.innerHTML = `
+          <button
+            class="btn-action ${seguindo ? 'danger' : 'primary'}"
+            id="btn-seguir"
+            onclick="toggleSeguir(${u.id})">
+            ${seguindo ? '✓ Seguindo' : '+ Seguir'}
+          </button>
+          <button class="btn-action outline" onclick="Orbita.copiar(window.location.href)">
+            Compartilhar
+          </button>
+        `;
+      }
+    }
+
+
+    // ==========================================
+    // FUNÇÃO: toggleSeguir(id)
+    // ==========================================
+    async function toggleSeguir(id) {
+      const btn = document.getElementById('btn-seguir');
+      btn.disabled = true;
+
+      try {
+        const resposta = await fetch(`${API_URL}/api/usuarios/${id}/seguir`, {
+          method:  'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+
+        const dados = await resposta.json();
+        if (!resposta.ok) {
+          Orbita.toast(dados.erro || 'Erro', 'error');
+          return;
+        }
+
+        // Atualiza o botão
+        btn.textContent = dados.seguindo ? '✓ Seguindo' : '+ Seguir';
+        btn.className   = `btn-action ${dados.seguindo ? 'danger' : 'primary'}`;
+
+        // Atualiza o contador
+        document.getElementById('stat-seguidores').textContent = dados.totalSeguidores;
+
+        Orbita.toast(dados.seguindo ? 'Seguindo! 🎉' : 'Deixou de seguir', 'default');
+
+      } catch (e) {
+        Orbita.toast('Erro ao conectar', 'error');
+      } finally {
+        btn.disabled = false;
+      }
     }
 
 
     // ==========================================
     // FUNÇÃO: carregarPosts(handle)
-    // Busca os posts do usuário na API
     // ==========================================
     async function carregarPosts(handle) {
       const lista = document.getElementById('posts-lista');
@@ -440,31 +524,25 @@
       `;
 
       try {
-        // Busca todos os posts e filtra pelo autor
-        const resposta = await fetch(`${API_URL}/api/posts`);
+        const resposta = await fetch(`${API_URL}/api/usuarios/${handle}/posts`);
         const dados    = await resposta.json();
 
         if (!resposta.ok) throw new Error();
 
-        // Filtra só os posts do usuário logado
-        const meusPosts = dados.posts.filter(p => p.autor_handle === handle);
+        document.getElementById('stat-posts').textContent = dados.total;
 
-        // Atualiza contador de posts
-        document.getElementById('stat-posts').textContent = meusPosts.length;
-
-        if (meusPosts.length === 0) {
+        if (dados.posts.length === 0) {
           lista.innerHTML = `
             <div class="empty-state">
               <div style="font-size:2rem; margin-bottom:12px">📝</div>
-              <p>Você ainda não publicou nada.</p>
-              <p style="margin-top:8px">Use a caixa acima para começar!</p>
+              <p>${ehMeuPerfil ? 'Você ainda não publicou nada.' : 'Nenhum post ainda.'}</p>
             </div>
           `;
           return;
         }
 
         lista.innerHTML = '';
-        meusPosts.forEach((post, i) => {
+        dados.posts.forEach((post, i) => {
           const tempo = Orbita.format.tempo(new Date(post.criado_em));
           lista.insertAdjacentHTML('beforeend', `
             <div class="post-card" id="card-${post.id}" style="animation-delay:${i * 0.07}s">
@@ -472,13 +550,14 @@
               <div class="post-meta-row">
                 <span>${tempo}</span>
                 <div class="post-actions">
-                  <button class="reaction-btn ${post.curtido ? 'active' : ''}"
-                          onclick="curtirPost(${post.id})">
+                  <button class="reaction-btn" onclick="curtirPost(${post.id})">
                     ✦ <span id="count-${post.id}">${post.curtidas}</span>
                   </button>
-                  <button class="reaction-btn" onclick="deletarPost(${post.id})">
-                    🗑️ Deletar
-                  </button>
+                  ${ehMeuPerfil ? `
+                    <button class="reaction-btn" onclick="deletarPost(${post.id})">
+                      🗑️ Deletar
+                    </button>
+                  ` : ''}
                 </div>
               </div>
             </div>
@@ -507,26 +586,19 @@
       try {
         const resposta = await fetch(`${API_URL}/api/posts`, {
           method:  'POST',
-          headers: {
-            'Content-Type':  'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({ texto }),
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body:    JSON.stringify({ texto }),
         });
 
         const dados = await resposta.json();
-
-        if (!resposta.ok) {
-          Orbita.toast(dados.erro || 'Erro ao publicar', 'error');
-          return;
-        }
+        if (!resposta.ok) { Orbita.toast(dados.erro || 'Erro', 'error'); return; }
 
         input.value = '';
         Orbita.toast('Post publicado! ✦', 'success');
-        carregarPosts(perfil.handle);
+        carregarPosts(handleAlvo);
 
       } catch (e) {
-        Orbita.toast('Erro ao conectar ao servidor', 'error');
+        Orbita.toast('Erro ao conectar', 'error');
       } finally {
         btn.disabled    = false;
         btn.textContent = 'Publicar →';
@@ -544,18 +616,11 @@
           method:  'POST',
           headers: { 'Authorization': `Bearer ${token}` },
         });
-
         const dados = await resposta.json();
         if (!resposta.ok) return;
-
-        const btn   = document.getElementById('like-' + id);
         const count = document.getElementById('count-' + id);
-        if (btn)   btn.classList.toggle('active', dados.curtido);
         if (count) count.textContent = dados.curtidas;
-
-      } catch (e) {
-        Orbita.toast('Erro ao curtir', 'error');
-      }
+      } catch (e) {}
     }
 
 
@@ -571,26 +636,19 @@
           headers: { 'Authorization': `Bearer ${token}` },
         });
 
-        if (!resposta.ok) {
-          Orbita.toast('Erro ao deletar', 'error');
-          return;
-        }
+        if (!resposta.ok) { Orbita.toast('Erro ao deletar', 'error'); return; }
 
         const card = document.getElementById('card-' + id);
-        card.style.opacity    = '0';
-        card.style.transform  = 'translateY(-8px)';
+        card.style.opacity = '0'; card.style.transform = 'translateY(-8px)';
         card.style.transition = 'all 0.3s ease';
         setTimeout(() => {
           card.remove();
-          document.getElementById('stat-posts').textContent =
-            parseInt(document.getElementById('stat-posts').textContent) - 1;
+          const el = document.getElementById('stat-posts');
+          el.textContent = Math.max(0, parseInt(el.textContent) - 1);
         }, 300);
 
         Orbita.toast('Post deletado', 'default');
-
-      } catch (e) {
-        Orbita.toast('Erro ao conectar ao servidor', 'error');
-      }
+      } catch (e) {}
     }
 
 
@@ -598,23 +656,12 @@
     // EDITAR PERFIL
     // ==========================================
     function abrirModalEditar() {
-      if (!perfil) return;
-
-      // Preenche o formulário com os dados atuais
-      document.getElementById('edit-nome').value   = perfil.nome   || '';
-      document.getElementById('edit-bio').value    = perfil.bio    || '';
-      document.getElementById('edit-cidade').value = perfil.cidade || '';
-      document.getElementById('edit-avatar').value = perfil.avatar || '';
-
+      if (!perfilAtual) return;
+      document.getElementById('edit-nome').value   = perfilAtual.nome   || '';
+      document.getElementById('edit-bio').value    = perfilAtual.bio    || '';
+      document.getElementById('edit-cidade').value = perfilAtual.cidade || '';
+      document.getElementById('edit-avatar').value = perfilAtual.avatar || '';
       document.getElementById('modal-editar').classList.add('open');
-    }
-
-    function fecharModal() {
-      document.getElementById('modal-editar').classList.remove('open');
-    }
-
-    function fecharModalSeOverlay(e) {
-      if (e.target.classList.contains('modal-overlay')) fecharModal();
     }
 
     async function salvarPerfil() {
@@ -626,47 +673,116 @@
       try {
         const resposta = await fetch(`${API_URL}/api/usuarios/perfil`, {
           method:  'PUT',
-          headers: {
-            'Content-Type':  'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({ nome, bio, cidade, avatar }),
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body:    JSON.stringify({ nome, bio, cidade, avatar }),
         });
 
         const dados = await resposta.json();
+        if (!resposta.ok) { Orbita.toast(dados.erro || 'Erro', 'error'); return; }
 
-        if (!resposta.ok) {
-          Orbita.toast(dados.erro || 'Erro ao salvar', 'error');
-          return;
-        }
-
-        // Atualiza os dados locais
-        perfil = { ...perfil, nome, bio, cidade, avatar };
-
-        // Atualiza o localStorage
-        Orbita.store.salvar('usuario', { ...Orbita.store.ler('usuario'), nome, avatar });
-
-        renderizarPerfil(perfil);
-        fecharModal();
+        perfilAtual = { ...perfilAtual, nome, bio, cidade, avatar };
+        Orbita.store.salvar('usuario', { ...euUsuario, nome, avatar });
+        renderizarPerfil(perfilAtual);
+        fecharModal('modal-editar');
         Orbita.toast('Perfil atualizado! ✦', 'success');
 
       } catch (e) {
-        Orbita.toast('Erro ao conectar ao servidor', 'error');
+        Orbita.toast('Erro ao conectar', 'error');
       }
     }
 
+
+    // ==========================================
+    // SEGUIDORES / SEGUINDO
+    // ==========================================
+    async function abrirSeguidores() {
+      document.getElementById('modal-lista-titulo').textContent = 'Seguidores';
+      document.getElementById('modal-lista').classList.add('open');
+
+      const conteudo = document.getElementById('modal-lista-conteudo');
+      conteudo.innerHTML = '<div class="skeleton-line"></div>';
+
+      try {
+        const resposta = await fetch(`${API_URL}/api/usuarios/${handleAlvo}/seguidores`);
+        const dados    = await resposta.json();
+
+        if (dados.seguidores.length === 0) {
+          conteudo.innerHTML = '<p style="color:var(--muted); font-size:0.85rem; text-align:center; padding:20px">Nenhum seguidor ainda.</p>';
+          return;
+        }
+
+        conteudo.innerHTML = dados.seguidores.map(u => `
+          <div class="user-item" onclick="irParaPerfil('${u.handle}')">
+            <div class="user-item-avatar">${u.avatar || '🙂'}</div>
+            <div>
+              <div class="user-item-nome">${u.nome}</div>
+              <div class="user-item-handle">@${u.handle}</div>
+            </div>
+          </div>
+        `).join('');
+
+      } catch (e) {
+        conteudo.innerHTML = '<p style="color:var(--muted)">Erro ao carregar.</p>';
+      }
+    }
+
+    async function abrirSeguindo() {
+      document.getElementById('modal-lista-titulo').textContent = 'Seguindo';
+      document.getElementById('modal-lista').classList.add('open');
+
+      const conteudo = document.getElementById('modal-lista-conteudo');
+      conteudo.innerHTML = '<div class="skeleton-line"></div>';
+
+      try {
+        const resposta = await fetch(`${API_URL}/api/usuarios/${handleAlvo}/seguindo`);
+        const dados    = await resposta.json();
+
+        if (dados.seguindo.length === 0) {
+          conteudo.innerHTML = '<p style="color:var(--muted); font-size:0.85rem; text-align:center; padding:20px">Não segue ninguém ainda.</p>';
+          return;
+        }
+
+        conteudo.innerHTML = dados.seguindo.map(u => `
+          <div class="user-item" onclick="irParaPerfil('${u.handle}')">
+            <div class="user-item-avatar">${u.avatar || '🙂'}</div>
+            <div>
+              <div class="user-item-nome">${u.nome}</div>
+              <div class="user-item-handle">@${u.handle}</div>
+            </div>
+          </div>
+        `).join('');
+
+      } catch (e) {
+        conteudo.innerHTML = '<p style="color:var(--muted)">Erro ao carregar.</p>';
+      }
+    }
+
+    // Navega para o perfil de outro usuário
+    function irParaPerfil(handle) {
+      window.location.href = `perfil.html?usuario=${handle}`;
+    }
+
+    function fecharModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+
+    function fecharModalSeOverlay(e, id) {
+      if (e.target.classList.contains('modal-overlay')) fecharModal(id);
+    }
 
     // Habilita botão de publicar ao digitar
     document.getElementById('post-input').addEventListener('input', function() {
       document.getElementById('btn-publicar').disabled = this.value.trim().length === 0;
     });
 
-    // Fecha modal com Escape
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') fecharModal();
+      if (e.key === 'Escape') {
+        fecharModal('modal-editar');
+        fecharModal('modal-lista');
+      }
     });
 
-    // Carrega o perfil ao abrir a página
+    // Carrega o perfil
     carregarPerfil();
 
   </script>
