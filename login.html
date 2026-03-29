@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Orbita — Entrar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    body {
+      display:         flex;
+      align-items:     center;
+      justify-content: center;
+      min-height:      100vh;
+      padding:         24px;
+    }
+
+    .bg-glow { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .bg-glow::before {
+      content: ''; position: absolute;
+      width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,255,90,0.07) 0%, transparent 70%);
+      top: -150px; left: -100px;
+      animation: drift1 12s ease-in-out infinite alternate;
+    }
+    .bg-glow::after {
+      content: ''; position: absolute;
+      width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(90,255,184,0.06) 0%, transparent 70%);
+      bottom: -100px; right: -100px;
+      animation: drift2 15s ease-in-out infinite alternate;
+    }
+    @keyframes drift1 { from { transform: translate(0,0); } to { transform: translate(60px,40px); } }
+    @keyframes drift2 { from { transform: translate(0,0); } to { transform: translate(-40px,-30px); } }
+
+    .auth-card {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 440px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px 40px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .tabs {
+      display: flex;
+      background: var(--surface2);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 32px;
+    }
+
+    .tab-btn {
+      flex: 1; padding: 10px;
+      border: none; border-radius: 9px;
+      background: transparent; color: var(--muted);
+      font-family: var(--font-body); font-size: 0.9rem; font-weight: 500;
+      cursor: pointer; transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--surface); color: var(--text);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .form-panel { display: none; }
+    .form-panel.active { display: block; animation: fadeUp 0.3s ease both; }
+
+    .form-title {
+      font-family: var(--font-display);
+      font-size: 1.4rem; font-weight: 700;
+      letter-spacing: -0.5px; margin-bottom: 6px;
+    }
+
+    .form-subtitle { font-size: 0.85rem; color: var(--muted); margin-bottom: 28px; }
+
+    .forgot-link { text-align: right; margin-top: -8px; margin-bottom: 16px; }
+    .forgot-link a { font-size: 0.8rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .forgot-link a:hover { color: var(--accent); }
+
+    .btn-submit {
+      width: 100%; padding: 14px;
+      border: none; border-radius: 10px;
+      background: var(--accent); color: #000;
+      font-family: var(--font-body); font-size: 0.95rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; margin-top: 8px;
+    }
+
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,255,90,0.2); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .back-link { text-align: center; margin-top: 24px; font-size: 0.82rem; color: var(--muted); }
+    .back-link a { color: var(--accent); text-decoration: none; }
+
+    .strength-bars { display: flex; gap: 4px; margin-top: 8px; margin-bottom: 4px; }
+    .strength-bar { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background 0.3s; }
+    .strength-label { font-size: 0.72rem; color: var(--muted); }
+
+    /* Caixa de erro da API */
+    .api-error {
+      background: rgba(255,90,90,0.1);
+      border: 1px solid rgba(255,90,90,0.2);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      color: var(--error);
+      margin-bottom: 16px;
+      display: none;
+    }
+    .api-error.visible { display: block; }
+  </style>
+</head>
+<body>
+
+  <div class="bg-glow"></div>
+
+  <div class="auth-card">
+
+    <a href="index.html" class="logo" style="margin-bottom:32px; display:inline-flex">
+      <span class="logo-dot"></span>
+      Orbita
+    </a>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('login')">Entrar</button>
+      <button class="tab-btn" onclick="showTab('cadastro')">Criar conta</button>
+    </div>
+
+    <!-- FORMULÁRIO DE LOGIN -->
+    <div class="form-panel active" id="panel-login">
+      <div class="form-title">Bem-vindo de volta 👋</div>
+      <div class="form-subtitle">Entre na sua conta para continuar</div>
+
+      <div class="api-error" id="erro-login"></div>
+
+      <div class="field">
+        <label for="login-email">E-mail</label>
+        <input type="email" id="login-email" placeholder="seu@email.com"/>
+        <div class="field-error" id="err-login-email">Digite um e-mail válido</div>
+      </div>
+
+      <div class="field">
+        <label for="login-senha">Senha</label>
+        <input type="password" id="login-senha" placeholder="••••••••"/>
+        <div class="field-error" id="err-login-senha">Digite sua senha</div>
+      </div>
+
+      <div class="forgot-link"><a href="#">Esqueci minha senha</a></div>
+
+      <button class="btn-submit" id="btn-login" onclick="handleLogin()">
+        Entrar na minha conta →
+      </button>
+
+      <div class="back-link">
+        Não tem conta? <a href="#" onclick="showTab('cadastro')">Crie uma agora</a>
+      </div>
+    </div>
+
+    <!-- FORMULÁRIO DE CADASTRO -->
+    <div class="form-panel" id="panel-cadastro">
+      <div class="form-title">Criar sua conta ✨</div>
+      <div class="form-subtitle">Leva menos de 1 minuto</div>
+
+      <div class="api-error" id="erro-cadastro"></div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="cad-nome">Nome</label>
+          <input type="text" id="cad-nome" placeholder="João"/>
+          <div class="field-error" id="err-cad-nome">Obrigatório</div>
+        </div>
+        <div class="field">
+          <label for="cad-sobrenome">Sobrenome</label>
+          <input type="text" id="cad-sobrenome" placeholder="Silva"/>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="cad-email">E-mail</label>
+        <input type="email" id="cad-email" placeholder="seu@email.com"/>
+        <div class="field-error" id="err-cad-email">Digite um e-mail válido</div>
+      </div>
+
+      <div class="field">
+        <label for="cad-senha">Senha</label>
+        <input type="password" id="cad-senha" placeholder="mínimo 6 caracteres"
+               oninput="checkPasswordStrength(this.value)"/>
+        <div class="field-error" id="err-cad-senha">Mínimo 6 caracteres</div>
+        <div class="strength-bars">
+          <div class="strength-bar" id="bar1"></div>
+          <div class="strength-bar" id="bar2"></div>
+          <div class="strength-bar" id="bar3"></div>
+          <div class="strength-bar" id="bar4"></div>
+        </div>
+        <div class="strength-label" id="strength-label"></div>
+      </div>
+
+      <button class="btn-submit" id="btn-cadastro" onclick="handleCadastro()">
+        Criar minha conta →
+      </button>
+
+      <div class="back-link">
+        Já tem conta? <a href="#" onclick="showTab('login')">Entrar agora</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+
+    // ==========================================
+    // Alterna entre as abas login/cadastro
+    // ==========================================
+    function showTab(aba) {
+      document.querySelectorAll('.tab-btn')   .forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.api-error') .forEach(e => e.classList.remove('visible'));
+
+      const index = aba === 'login' ? 0 : 1;
+      document.querySelectorAll('.tab-btn')[index].classList.add('active');
+      document.getElementById('panel-' + aba).classList.add('active');
+    }
+
+
+    // ==========================================
+    // LOGIN — chama a API real
+    // ==========================================
+    async function handleLogin() {
+      const email = document.getElementById('login-email').value.trim();
+      const senha = document.getElementById('login-senha').value;
+      const btn   = document.getElementById('btn-login');
+      const erro  = document.getElementById('erro-login');
+
+      // Validação no frontend antes de chamar a API
+      if (!Orbita.validar.email(email)) {
+        document.getElementById('login-email').classList.add('error');
+        document.getElementById('err-login-email').classList.add('visible');
+        return;
+      }
+
+      if (senha.length === 0) {
+        document.getElementById('login-senha').classList.add('error');
+        document.getElementById('err-login-senha').classList.add('visible');
+        return;
+      }
+
+      // Limpa erros anteriores
+      document.querySelectorAll('#panel-login input').forEach(i => i.classList.remove('error'));
+      document.querySelectorAll('#panel-login .field-error').forEach(e => e.classList.remove('visible'));
+      erro.classList.remove('visible');
+
+      btn.disabled    = true;
+      btn.textContent = 'Entrando...';
+
+      try {
+        // ----------------------------------------
+        // fetch() faz a requisição HTTP para a API
+        // ----------------------------------------
+        const resposta = await fetch(`${API_URL}/api/auth/login`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ email, senha }),
+        });
+
+        const dados = await resposta.json();
+
+        if (!resposta.ok) {
+          // Mostra o erro retornado pelo backend
+          erro.textContent = dados.erro || 'Erro ao fazer login';
+          erro.classList.add('visible');
+          return;
+        }
+
+        // Salva o token no localStorage
+        Orbita.store.salvar('token',   dados.token);
+        Orbita.store.salvar('usuario', dados.usuario);
+        Orbita.store.salvar('logado',  true);
+
+        Orbita.toast('Login realizado! ✦', 'success');
+
+        // Redireciona para o feed
+        setTimeout(() => { window.location.href = 'feed.html'; }, 800);
+
+      } catch (e) {
+        erro.textContent = 'Servidor offline. Verifique se o backend está rodando.';
+        erro.classList.add('visible');
+      } finally {
+        // "finally" sempre roda — com erro ou sem
+        btn.disabled    = false;
+        btn.textContent = 'Entrar na minha conta →';
+      }
+    }
+
+
+    // ==========================================
+    // CADASTRO — chama a API real
+    // ==========================================
+    async function handleCadastro() {
+      const nome      = document.getElementById('cad-nome').value.trim();
+      const sobrenome = document.getElementById('cad-sobrenome').value.trim();
+      const email     = document.getElementById('cad-email').value.trim();
+      const senha     = document.getElementById('cad-senha').value;
+      const btn       = document.getElementById('btn-cadastro');
+      const erro      = document.getElementById('erro-cadastro');
+
+      let valido = true;
+
+      if (nome.length === 0) {
+        document.getElementById('cad-nome').classList.add('error');
+        document.getElementById('err-cad-nome').classList.add('visible');
+        valido = false;
+      }
+
+      if (!Orbita.validar.email(email)) {
+        document.getElementById('cad-email').classList.add('error');
+        document.getElementById('err-cad-email').classList.add('visible');
+        valido = false;
+      }
+
+      if (senha.length < 6) {
+        document.getElementById('cad-senha').classList.add('error');
+        document.getElementById('err-cad-senha').classList.add('visible');
+        valido = false;
+      }
+
+      if (!valido) return;
+
+      erro.classList.remove('visible');
+      btn.disabled    = true;
+      btn.textContent = 'Criando conta...';
+
+      try {
+        const nomeCompleto = sobrenome ? `${nome} ${sobrenome}` : nome;
+
+        const resposta = await fetch(`${API_URL}/api/auth/cadastro`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ nome: nomeCompleto, email, senha }),
+        });
+
+        const dados = await resposta.json();
+
+        if (!resposta.ok) {
+          erro.textContent = dados.erro || 'Erro ao criar conta';
+          erro.classList.add('visible');
+          return;
+        }
+
+        // Salva o token e redireciona
+        Orbita.store.salvar('token',   dados.token);
+        Orbita.store.salvar('usuario', dados.usuario);
+
+        Orbita.toast('Conta criada! Bem-vindo ao Orbita 🎉', 'success');
+
+        setTimeout(() => { window.location.href = 'feed.html'; }, 800);
+
+      } catch (e) {
+        erro.textContent = 'Servidor offline. Verifique se o backend está rodando.';
+        erro.classList.add('visible');
+      } finally {
+        btn.disabled    = false;
+        btn.textContent = 'Criar minha conta →';
+      }
+    }
+
+
+    // ==========================================
+    // Indicador de força da senha
+    // ==========================================
+    function checkPasswordStrength(senha) {
+      const forca = [
+        senha.length >= 6,
+        /[A-Z]/.test(senha),
+        /[0-9]/.test(senha),
+        /[^A-Za-z0-9]/.test(senha),
+      ].filter(Boolean).length;
+
+      const cores   = ['', '#ff5a5a', '#ffaa5a', '#e8ff5a', '#5affb8'];
+      const rotulos = ['', 'Fraca', 'Razoável', 'Boa', 'Forte'];
+
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById('bar' + i).style.background =
+          i <= forca ? cores[forca] : 'var(--border)';
+      }
+
+      const label = document.getElementById('strength-label');
+      label.textContent = senha.length > 0 ? rotulos[forca] : '';
+      label.style.color = cores[forca];
+    }
+
+
+    // Se já estiver logado, vai direto pro feed
+    if (Orbita.auth.estaLogado()) {
+      window.location.href = 'feed.html';
+    }
+
+    // Login com a tecla Enter
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const painel = document.querySelector('.form-panel.active').id;
+        if (painel === 'panel-login')    handleLogin();
+        if (painel === 'panel-cadastro') handleCadastro();
+      }
+    });
+
+  </script>
+</body>
+</html>

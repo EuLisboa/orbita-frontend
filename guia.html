@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Orbita — Exemplo de importação</title>
+
+  <!-- ================================================
+       IMPORTANDO OS ARQUIVOS COMPARTILHADOS
+       
+       Toda página nova do Orbita começa assim:
+       1. Importa as fontes do Google
+       2. Importa o styles.css (estilos globais)
+       3. Seu CSS específico vem depois, no <style>
+  ================================================ -->
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+
+  <style>
+    /* ============================================
+       CSS ESPECÍFICO DESTA PÁGINA
+       Só coloque aqui o que não existe no styles.css
+    ============================================ */
+    .demo-page {
+      max-width: 700px;
+      margin: 60px auto;
+      padding: 0 24px;
+    }
+
+    .demo-title {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+
+    .demo-sub {
+      color: var(--muted);
+      margin-bottom: 48px;
+    }
+
+    .demo-section {
+      margin-bottom: 48px;
+    }
+
+    .demo-section-title {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 16px;
+    }
+
+    .demo-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .code-block {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      font-family: monospace;
+      font-size: 0.83rem;
+      color: var(--accent2);
+      line-height: 1.7;
+      margin-top: 12px;
+      white-space: pre;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================
+       NAVBAR — usando as classes do styles.css
+  ============================================= -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-dot"></span>
+        Orbita
+      </a>
+      <div style="flex:1; display:flex; gap:6px; justify-content:center">
+        <a href="feed.html"        class="nav-btn">🏠 Feed</a>
+        <a href="comunidades.html" class="nav-btn">🌐 Comunidades</a>
+        <a href="perfil.html"      class="nav-btn">👤 Perfil</a>
+      </div>
+      <a href="login.html" class="nav-btn primary">Sair</a>
+    </div>
+  </nav>
+
+  <!-- ============================================
+       CONTEÚDO DA PÁGINA
+  ============================================= -->
+  <div class="demo-page">
+
+    <div class="demo-title">✦ Guia de uso</div>
+    <p class="demo-sub">
+      Esta página demonstra como usar o <code>styles.css</code>
+      e o <code>app.js</code> em qualquer página nova do Orbita.
+    </p>
+
+    <!-- BOTÕES -->
+    <div class="demo-section">
+      <div class="demo-section-title">Botões — classes do styles.css</div>
+      <div class="demo-row">
+        <button class="btn btn-primary">Primário</button>
+        <button class="btn btn-secondary">Secundário</button>
+        <button class="btn btn-danger">Perigo</button>
+        <button class="btn btn-primary" disabled>Desativado</button>
+      </div>
+      <div class="code-block">&lt;button class="btn btn-primary"&gt;Texto&lt;/button&gt;
+&lt;button class="btn btn-secondary"&gt;Texto&lt;/button&gt;
+&lt;button class="btn btn-danger"&gt;Texto&lt;/button&gt;</div>
+    </div>
+
+    <!-- BADGES -->
+    <div class="demo-section">
+      <div class="demo-section-title">Badges e Tags</div>
+      <div class="demo-row">
+        <span class="badge badge-accent">✦ Novo</span>
+        <span class="badge badge-green">✓ Ativo</span>
+        <span class="badge badge-pink">⚠ Alerta</span>
+        <span class="tag">💻 Tecnologia</span>
+        <span class="tag">🎮 Games</span>
+      </div>
+      <div class="code-block">&lt;span class="badge badge-accent"&gt;Novo&lt;/span&gt;
+&lt;span class="tag"&gt;💻 Tecnologia&lt;/span&gt;</div>
+    </div>
+
+    <!-- AVATARES -->
+    <div class="demo-section">
+      <div class="demo-section-title">Avatares</div>
+      <div class="demo-row" style="align-items:center">
+        <div class="avatar avatar-sm">😊</div>
+        <div class="avatar avatar-md">🧑‍💻</div>
+        <div class="avatar avatar-lg">🧑‍🎨</div>
+        <div class="avatar avatar-xl">👩‍💼</div>
+        <!-- Com status online -->
+        <div class="avatar-wrap">
+          <div class="avatar avatar-md">🧑‍💻</div>
+          <span class="status-dot status-online"></span>
+        </div>
+      </div>
+      <div class="code-block">&lt;div class="avatar avatar-md"&gt;🧑‍💻&lt;/div&gt;
+
+&lt;!-- Com status online --&gt;
+&lt;div class="avatar-wrap"&gt;
+  &lt;div class="avatar avatar-md"&gt;🧑‍💻&lt;/div&gt;
+  &lt;span class="status-dot status-online"&gt;&lt;/span&gt;
+&lt;/div&gt;</div>
+    </div>
+
+    <!-- CARD -->
+    <div class="demo-section">
+      <div class="demo-section-title">Card</div>
+      <div class="card">
+        <div class="card-body">
+          <div class="card-title">Título do card</div>
+          <p class="text-muted text-sm mt-sm">
+            Conteúdo do card usando classes utilitárias do styles.css.
+          </p>
+          <div class="divider"></div>
+          <div class="flex gap-sm">
+            <button class="btn btn-primary">Ação</button>
+            <button class="btn btn-secondary">Cancelar</button>
+          </div>
+        </div>
+      </div>
+      <div class="code-block">&lt;div class="card"&gt;
+  &lt;div class="card-body"&gt;
+    &lt;div class="card-title"&gt;Título&lt;/div&gt;
+    &lt;div class="divider"&gt;&lt;/div&gt;
+    &lt;button class="btn btn-primary"&gt;Ação&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</div>
+    </div>
+
+    <!-- FORMULÁRIO -->
+    <div class="demo-section">
+      <div class="demo-section-title">Formulário</div>
+      <div class="card">
+        <div class="card-body">
+          <div class="field">
+            <label for="demo-email">E-mail</label>
+            <input type="email" id="demo-email" placeholder="seu@email.com"/>
+          </div>
+          <div class="field">
+            <label for="demo-senha">Senha</label>
+            <input type="password" id="demo-senha" placeholder="••••••••"/>
+          </div>
+          <button class="btn btn-primary" style="width:100%" onclick="testarLogin()">
+            Testar login →
+          </button>
+        </div>
+      </div>
+      <div class="code-block">&lt;div class="field"&gt;
+  &lt;label for="email"&gt;E-mail&lt;/label&gt;
+  &lt;input type="email" id="email" placeholder="seu@email.com"/&gt;
+&lt;/div&gt;</div>
+    </div>
+
+    <!-- TOASTS -->
+    <div class="demo-section">
+      <div class="demo-section-title">Toasts — via app.js</div>
+      <div class="demo-row">
+        <button class="btn btn-secondary" onclick="Orbita.toast('Mensagem padrão!')">
+          Default
+        </button>
+        <button class="btn btn-secondary" onclick="Orbita.toast('Tudo certo! ✓', 'success')">
+          Sucesso
+        </button>
+        <button class="btn btn-secondary" onclick="Orbita.toast('Algo deu errado!', 'error')">
+          Erro
+        </button>
+        <button class="btn btn-secondary" onclick="Orbita.toast('Destaque! ✦', 'accent')">
+          Accent
+        </button>
+      </div>
+      <div class="code-block">// No JavaScript da sua página:
+Orbita.toast('Mensagem aqui!')
+Orbita.toast('Sucesso!', 'success')
+Orbita.toast('Erro!',    'error')</div>
+    </div>
+
+    <!-- UTILITÁRIOS -->
+    <div class="demo-section">
+      <div class="demo-section-title">Outras funções do app.js</div>
+      <div class="demo-row">
+        <button class="btn btn-secondary"
+                onclick="Orbita.copiar('https://orbita.app')">
+          📋 Copiar link
+        </button>
+        <button class="btn btn-secondary"
+                onclick="alert(Orbita.format.numero(3420))">
+          Formatar número
+        </button>
+        <button class="btn btn-secondary"
+                onclick="alert(Orbita.format.tempo(new Date(Date.now() - 120000)))">
+          Formatar tempo
+        </button>
+      </div>
+      <div class="code-block">// Copiar texto
+Orbita.copiar('https://orbita.app')
+
+// Formatar número: 3420 → "3.420"
+Orbita.format.numero(3420)
+
+// Formatar tempo relativo
+Orbita.format.tempo(new Date()) // "agora mesmo"
+
+// Validar e-mail
+Orbita.validar.email('teste@gmail.com') // true
+
+// Força da senha
+Orbita.validar.senha('Senha@123')
+// → { forca: 4, nivel: 'forte' }</div>
+    </div>
+
+    <!-- COMO CRIAR NOVA PÁGINA -->
+    <div class="demo-section">
+      <div class="demo-section-title">Como criar uma nova página</div>
+      <div class="code-block">&lt;!-- 1. No &lt;head&gt;, importe as fontes e o CSS --&gt;
+&lt;link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&amp;family=DM+Sans:wght@300;400;500&amp;display=swap" rel="stylesheet"/&gt;
+&lt;link rel="stylesheet" href="styles.css"/&gt;
+
+&lt;!-- 2. Seu CSS específico vem depois --&gt;
+&lt;style&gt;
+  /* só o que não existe no styles.css */
+&lt;/style&gt;
+
+&lt;!-- 3. Antes do &lt;/body&gt;, importe o JS --&gt;
+&lt;script src="app.js"&gt;&lt;/script&gt;
+
+&lt;!-- 4. Seu JS específico vem depois --&gt;
+&lt;script&gt;
+  // use Orbita.toast(), Orbita.modal, etc.
+&lt;/script&gt;</div>
+    </div>
+
+  </div>
+
+  <!-- ============================================
+       IMPORTANDO O JS COMPARTILHADO
+       Sempre antes do </body> e antes do
+       seu script específico da página.
+  ============================================= -->
+  <script src="app.js"></script>
+
+  <!-- Script específico desta página -->
+  <script>
+    function testarLogin() {
+      const email = document.getElementById('demo-email').value;
+      const senha = document.getElementById('demo-senha').value;
+
+      // Usa a validação do app.js
+      const emailOk = Orbita.validar.email(email);
+      const senhaOk = senha.length >= 1;
+
+      if (!emailOk) {
+        Orbita.toast('E-mail inválido', 'error');
+        return;
+      }
+
+      if (!senhaOk) {
+        Orbita.toast('Digite a senha', 'error');
+        return;
+      }
+
+      // Usa o auth do app.js
+      Orbita.auth.login(email, senha);
+      Orbita.toast('Login realizado! ✓', 'success');
+    }
+  </script>
+
+</body>
+</html>

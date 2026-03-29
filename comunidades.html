@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Orbita — Comunidades</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    /* =============================================
+       VARIÁVEIS E BASE
+    ============================================= */
+    :root {
+      --bg: #0d0d0f;
+      --surface: #16161a;
+      --surface2: #1e1e24;
+      --accent: #e8ff5a;
+      --accent2: #5affb8;
+      --accent3: #ff5a8a;
+      --text: #f0f0f0;
+      --muted: #888;
+      --border: rgba(255,255,255,0.07);
+      --radius: 16px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+    }
+
+    /* =============================================
+       NAVBAR — igual ao perfil.html
+    ============================================= */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,13,15,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+
+    .nav-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      gap: 16px;
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: var(--accent);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-shrink: 0;
+    }
+
+    .logo-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent3);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50%      { transform: scale(1.5); opacity: 0.5; }
+    }
+
+    /* Campo de busca na navbar */
+    .nav-search {
+      flex: 1;
+      max-width: 320px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 16px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .nav-search::placeholder { color: var(--muted); }
+    .nav-search:focus { border-color: var(--accent); }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      padding: 7px 16px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .nav-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+
+    .nav-btn.active {
+      color: var(--accent);
+      border-color: rgba(232,255,90,0.3);
+      background: rgba(232,255,90,0.05);
+    }
+
+    /* =============================================
+       LAYOUT PRINCIPAL
+    ============================================= */
+    .page {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    /* =============================================
+       CABEÇALHO DA SEÇÃO
+    ============================================= */
+    .page-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 16px;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .page-sub {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .btn-new {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 999px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-new:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(232,255,90,0.2);
+    }
+
+    /* =============================================
+       FILTROS — abas horizontais para filtrar
+       as comunidades por categoria
+    ============================================= */
+    .filters {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.5s 0.1s ease both;
+    }
+
+    .filter-btn {
+      padding: 7px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover {
+      color: var(--text);
+      border-color: rgba(255,255,255,0.15);
+    }
+
+    /* Filtro ativo */
+    .filter-btn.active {
+      background: var(--surface2);
+      color: var(--text);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    /* =============================================
+       SEÇÃO "MINHAS COMUNIDADES"
+    ============================================= */
+    .section-label {
+      font-size: 0.72rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+      font-weight: 500;
+    }
+
+    /* =============================================
+       GRID DE COMUNIDADES
+       auto-fill + minmax = número de colunas
+       automático conforme o tamanho da tela
+    ============================================= */
+    .communities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    /* =============================================
+       CARD DE COMUNIDADE
+    ============================================= */
+    .community-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s;
+      animation: fadeUp 0.5s ease both;
+      position: relative;
+    }
+
+    .community-card:hover {
+      border-color: rgba(255,255,255,0.15);
+      transform: translateY(-3px);
+    }
+
+    /* Banner colorido do topo do card */
+    .community-banner {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      position: relative;
+    }
+
+    /* Badge "membro" no canto */
+    .member-badge {
+      position: absolute;
+      top: 8px; right: 8px;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(90,255,184,0.4);
+      color: var(--accent2);
+      font-size: 0.65rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .community-body { padding: 14px 16px 16px; }
+
+    .community-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+
+    .community-desc {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 12px;
+
+      /* Limita a 2 linhas com reticências */
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .community-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .community-members {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* Botão entrar/sair dentro do card */
+    .btn-join {
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .btn-join:hover {
+      color: var(--text);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    /* Estado: já é membro */
+    .btn-join.member {
+      background: rgba(90,255,184,0.1);
+      border-color: rgba(90,255,184,0.3);
+      color: var(--accent2);
+    }
+
+    .btn-join.member:hover {
+      background: rgba(255,90,90,0.1);
+      border-color: rgba(255,90,90,0.3);
+      color: #ff7070;
+    }
+
+    /* =============================================
+       MODAL — janela que abre ao clicar numa
+       comunidade, mostrando mais detalhes.
+       É sobreposta à página (overlay).
+    ============================================= */
+
+    /* Fundo escuro atrás do modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0; /* cobre a tela toda */
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none; /* não captura cliques quando escondido */
+      transition: opacity 0.25s;
+    }
+
+    /* Quando ativo, aparece */
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto; /* scroll se o conteúdo for grande */
+      transform: translateY(20px) scale(0.97);
+      transition: transform 0.25s;
+    }
+
+    .modal-overlay.open .modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-banner {
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 12px; right: 12px;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover { background: rgba(255,255,255,0.1); }
+
+    .modal-body { padding: 24px; }
+
+    .modal-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .modal-category {
+      font-size: 0.78rem;
+      color: var(--accent2);
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .modal-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .modal-stats {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      padding: 16px;
+      background: var(--surface2);
+      border-radius: 12px;
+    }
+
+    .modal-stat { text-align: center; flex: 1; }
+
+    .modal-stat-num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    .modal-stat-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    /* Posts recentes dentro do modal */
+    .modal-posts { margin-bottom: 20px; }
+
+    .modal-posts-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+      color: var(--muted);
+    }
+
+    .modal-post-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-post-item:last-child { border-bottom: none; }
+
+    .modal-post-avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .modal-post-text {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .modal-post-name {
+      font-weight: 500;
+      color: var(--text);
+      font-size: 0.82rem;
+    }
+
+    .btn-join-modal {
+      width: 100%;
+      padding: 13px;
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+
+    .btn-join-modal.join {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .btn-join-modal.join:hover {
+      box-shadow: 0 8px 24px rgba(232,255,90,0.2);
+    }
+
+    .btn-join-modal.leave {
+      background: var(--surface2);
+      color: var(--accent3);
+      border: 1px solid rgba(255,90,138,0.2);
+    }
+
+    /* =============================================
+       MODAL DE CRIAR COMUNIDADE
+    ============================================= */
+    .create-modal .modal-body { padding: 28px; }
+
+    .create-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.3rem;
+      letter-spacing: -0.5px;
+      margin-bottom: 24px;
+    }
+
+    .field { margin-bottom: 16px; }
+
+    label {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    input[type="text"], textarea, select {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus { border-color: var(--accent); }
+
+    textarea { resize: none; min-height: 80px; }
+
+    /* select = campo de seleção (dropdown) */
+    select option { background: var(--surface2); }
+
+    .emoji-picker {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .emoji-option {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .emoji-option:hover { border-color: var(--accent); transform: scale(1.1); }
+    .emoji-option.selected { border-color: var(--accent); background: rgba(232,255,90,0.1); }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .btn-cancel {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-cancel:hover { color: var(--text); }
+
+    .btn-create {
+      flex: 2;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: var(--accent);
+      color: #000;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-create:hover { box-shadow: 0 4px 16px rgba(232,255,90,0.2); }
+
+  </style>
+</head>
+<body>
+
+  <!-- ============================================
+       NAVBAR
+  ============================================= -->
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-dot"></span>
+        Orbita
+      </a>
+      <input class="nav-search" type="text" placeholder="🔍 Buscar comunidades..."
+             oninput="filtrarBusca(this.value)"/>
+      <div class="nav-actions">
+        <a href="perfil.html" class="nav-btn">👤 Perfil</a>
+        <a href="comunidades.html" class="nav-btn active">🌐 Comunidades</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============================================
+       CONTEÚDO
+  ============================================= -->
+  <div class="page">
+
+    <div class="page-header">
+      <div>
+        <div class="page-title">Comunidades</div>
+        <div class="page-sub">Encontre seu povo — entre em grupos do seu interesse</div>
+      </div>
+      <button class="btn-new" onclick="abrirModalCriar()">
+        + Nova comunidade
+      </button>
+    </div>
+
+    <!-- Filtros por categoria -->
+    <div class="filters">
+      <button class="filter-btn active" onclick="filtrarCategoria('todos', this)">Todos</button>
+      <button class="filter-btn" onclick="filtrarCategoria('tecnologia', this)">💻 Tecnologia</button>
+      <button class="filter-btn" onclick="filtrarCategoria('musica', this)">🎵 Música</button>
+      <button class="filter-btn" onclick="filtrarCategoria('games', this)">🎮 Games</button>
+      <button class="filter-btn" onclick="filtrarCategoria('esporte', this)">⚽ Esporte</button>
+      <button class="filter-btn" onclick="filtrarCategoria('arte', this)">🎨 Arte</button>
+    </div>
+
+    <!-- Minhas comunidades -->
+    <div class="section-label">Minhas comunidades</div>
+    <div class="communities-grid" id="grid-minhas"></div>
+
+    <!-- Descobrir comunidades -->
+    <div class="section-label">Descobrir</div>
+    <div class="communities-grid" id="grid-descobrir"></div>
+
+  </div>
+
+  <!-- ============================================
+       MODAL: DETALHES DA COMUNIDADE
+  ============================================= -->
+  <div class="modal-overlay" id="modal-detalhe" onclick="fecharModalDetalhe(event)">
+    <div class="modal" id="modal-detalhe-inner">
+      <div class="modal-banner" id="modal-banner">
+        <button class="modal-close" onclick="fecharModal('modal-detalhe')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-category" id="modal-cat"></div>
+        <div class="modal-name" id="modal-name"></div>
+        <div class="modal-desc" id="modal-desc"></div>
+        <div class="modal-stats">
+          <div class="modal-stat">
+            <div class="modal-stat-num" id="modal-members"></div>
+            <div class="modal-stat-label">Membros</div>
+          </div>
+          <div class="modal-stat">
+            <div class="modal-stat-num" id="modal-posts-count"></div>
+            <div class="modal-stat-label">Posts/semana</div>
+          </div>
+          <div class="modal-stat">
+            <div class="modal-stat-num" id="modal-age"></div>
+            <div class="modal-stat-label">Anos ativa</div>
+          </div>
+        </div>
+        <div class="modal-posts">
+          <div class="modal-posts-title">Posts recentes</div>
+          <div id="modal-posts-list"></div>
+        </div>
+        <button class="btn-join-modal" id="btn-join-modal"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       MODAL: CRIAR COMUNIDADE
+  ============================================= -->
+  <div class="modal-overlay" id="modal-criar" onclick="fecharModalDetalhe(event)">
+    <div class="modal create-modal">
+      <div class="modal-body">
+        <button class="modal-close" style="position:static; float:right; margin-bottom:8px"
+                onclick="fecharModal('modal-criar')">✕</button>
+        <div class="create-title">✦ Nova comunidade</div>
+
+        <div class="field">
+          <label>Ícone da comunidade</label>
+          <div class="emoji-picker" id="emoji-picker">
+            <div class="emoji-option selected" onclick="selecionarEmoji(this, '💻')">💻</div>
+            <div class="emoji-option" onclick="selecionarEmoji(this, '🎵')">🎵</div>
+            <div class="emoji-option" onclick="selecionarEmoji(this, '🎮')">🎮</div>
+            <div class="emoji-option" onclick="selecionarEmoji(this, '⚽')">⚽</div>
+            <div class="emoji-option" onclick="selecionarEmoji(this, '🎨')">🎨</div>
+            <div class="emoji-option" onclick="selecionarEmoji(this, '📚')">📚</div>
+            <div class="emoji-option" onclick="selecionarEmoji(this, '🍕')">🍕</div>
+            <div class="emoji-option" onclick="selecionarEmoji(this, '✈️')">✈️</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="criar-nome">Nome da comunidade</label>
+          <input type="text" id="criar-nome" placeholder="Ex: Devs BR, Amantes de Jazz..."/>
+        </div>
+
+        <div class="field">
+          <label for="criar-desc">Descrição</label>
+          <textarea id="criar-desc" placeholder="Sobre o que é essa comunidade?"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="criar-cat">Categoria</label>
+          <!-- select = dropdown de opções -->
+          <select id="criar-cat">
+            <option value="tecnologia">💻 Tecnologia</option>
+            <option value="musica">🎵 Música</option>
+            <option value="games">🎮 Games</option>
+            <option value="esporte">⚽ Esporte</option>
+            <option value="arte">🎨 Arte</option>
+            <option value="outro">🌐 Outro</option>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-cancel" onclick="fecharModal('modal-criar')">Cancelar</button>
+          <button class="btn-create" onclick="criarComunidade()">Criar comunidade →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       JAVASCRIPT
+  ============================================= -->
+  <script>
+
+    // ==========================================
+    // DADOS DAS COMUNIDADES
+    // Em um projeto real, esses dados viriam
+    // de um banco de dados via API.
+    // Por enquanto, usamos um array de objetos.
+    // ==========================================
+
+    // Um "objeto" em JS agrupa dados relacionados
+    // usando chave: valor
+    const comunidades = [
+      {
+        id: 1,
+        nome: 'Programadores BR',
+        emoji: '💻',
+        categoria: 'tecnologia',
+        desc: 'Comunidade para devs brasileiros trocarem experiências, dicas, vagas e projetos.',
+        membros: 3420,
+        posts: 87,
+        anos: 2,
+        membro: true, // já sou membro
+        cor: 'linear-gradient(135deg, #0a1a0a, #1a2a0a)',
+        posts_recentes: [
+          { user: '🧑‍💻', nome: 'Carlos Dev', texto: 'Alguém usa Next.js 14? Vale a migração?' },
+          { user: '👩‍💻', nome: 'Letícia', texto: 'Compartilhando meu portfólio — feedback bem-vindo!' },
+        ]
+      },
+      {
+        id: 2,
+        nome: 'Eletrônica BR',
+        emoji: '🎵',
+        categoria: 'musica',
+        desc: 'Sets, tracks e descobertas do universo eletrônico. House, Techno, Drum & Bass e muito mais.',
+        membros: 1890,
+        posts: 45,
+        anos: 1,
+        membro: true,
+        cor: 'linear-gradient(135deg, #0a0a1a, #1a0a2a)',
+        posts_recentes: [
+          { user: '🎧', nome: 'Pedro Lima', texto: 'Set novo no SoundCloud — techno progressivo!' },
+          { user: '🎹', nome: 'DJ Marcos', texto: 'Alguém vai ao festival em SP esse fim de semana?' },
+        ]
+      },
+      {
+        id: 3,
+        nome: 'Design & UI',
+        emoji: '🎨',
+        categoria: 'arte',
+        desc: 'Para designers, ilustradores e entusiastas de UI/UX. Compartilhe seu trabalho e aprenda.',
+        membros: 2150,
+        posts: 63,
+        anos: 3,
+        membro: false,
+        cor: 'linear-gradient(135deg, #1a0a0a, #2a0a1a)',
+        posts_recentes: [
+          { user: '🧑‍🎨', nome: 'Ana Paula', texto: 'Meu novo projeto de branding — o que acham?' },
+          { user: '✏️', nome: 'Rafael', texto: 'Dica: usem variáveis no Figma para economizar tempo!' },
+        ]
+      },
+      {
+        id: 4,
+        nome: 'Games Retrô',
+        emoji: '🎮',
+        categoria: 'games',
+        desc: 'Para quem ama clássicos: Mega Drive, SNES, PS1, N64 e toda a nostalgia dos anos 90.',
+        membros: 980,
+        posts: 29,
+        anos: 1,
+        membro: false,
+        cor: 'linear-gradient(135deg, #1a1a0a, #2a1a0a)',
+        posts_recentes: [
+          { user: '🕹️', nome: 'Guilherme', texto: 'Consegui um Mega Drive original — alguém sabe consertar?' },
+          { user: '👾', nome: 'Camila', texto: 'Minha lista dos 10 melhores do SNES — discutam!' },
+        ]
+      },
+      {
+        id: 5,
+        nome: 'Futebol BR',
+        emoji: '⚽',
+        categoria: 'esporte',
+        desc: 'Torcedores de todo o Brasil discutindo futebol nacional e internacional.',
+        membros: 5600,
+        posts: 210,
+        anos: 4,
+        membro: false,
+        cor: 'linear-gradient(135deg, #0a1a0a, #0a2a0a)',
+        posts_recentes: [
+          { user: '⚽', nome: 'Torcedor01', texto: 'Que rodada foi essa! Seu time ganhou?' },
+          { user: '🏆', nome: 'Analista', texto: 'Análise tática do último jogo da Seleção' },
+        ]
+      },
+      {
+        id: 6,
+        nome: 'Leitura & Livros',
+        emoji: '📚',
+        categoria: 'arte',
+        desc: 'Resenhas, recomendações e discussões sobre literatura brasileira e mundial.',
+        membros: 1230,
+        posts: 38,
+        anos: 2,
+        membro: false,
+        cor: 'linear-gradient(135deg, #1a0a1a, #2a0a2a)',
+        posts_recentes: [
+          { user: '📖', nome: 'Beatriz', texto: 'Terminei "Torto Arado" — que livro poderoso!' },
+          { user: '✍️', nome: 'Renato', texto: 'Recomendações de ficção científica brasileira?' },
+        ]
+      },
+    ];
+
+    // Variável que guarda qual emoji foi selecionado
+    let emojiSelecionado = '💻';
+
+    // Variável que guarda qual comunidade está aberta no modal
+    let comunidadeAtual = null;
+
+    // Filtro ativo no momento
+    let categoriaAtiva = 'todos';
+
+
+    // ==========================================
+    // FUNÇÃO: renderComunidades(lista)
+    // Gera os cards HTML a partir do array de dados.
+    // Separa em "minhas comunidades" e "descobrir".
+    // ==========================================
+    function renderComunidades(lista) {
+      const gridMinhas    = document.getElementById('grid-minhas');
+      const gridDescobrr  = document.getElementById('grid-descobrir');
+
+      // Limpa os grids antes de redesenhar
+      gridMinhas.innerHTML   = '';
+      gridDescobrr.innerHTML = '';
+
+      // Filtra por categoria
+      const filtradas = categoriaAtiva === 'todos'
+        ? lista
+        : lista.filter(c => c.categoria === categoriaAtiva);
+
+      // Para cada comunidade, cria um card
+      filtradas.forEach((c, i) => {
+        const card = document.createElement('div');
+        card.className = 'community-card';
+        card.style.animationDelay = (i * 0.07) + 's';
+        card.dataset.id = c.id; // guarda o id no elemento
+
+        // innerHTML = define o HTML interno do elemento
+        card.innerHTML = `
+          <div class="community-banner" style="background: ${c.cor}">
+            ${c.emoji}
+            ${c.membro ? '<span class="member-badge">✓ membro</span>' : ''}
+          </div>
+          <div class="community-body">
+            <div class="community-name">${c.nome}</div>
+            <div class="community-desc">${c.desc}</div>
+            <div class="community-meta">
+              <div class="community-members">👥 ${c.membros.toLocaleString('pt-BR')}</div>
+              <button class="btn-join ${c.membro ? 'member' : ''}"
+                      onclick="toggleMembro(event, ${c.id})">
+                ${c.membro ? 'Membro' : 'Entrar'}
+              </button>
+            </div>
+          </div>
+        `;
+
+        // Clique no card abre o modal de detalhes
+        card.addEventListener('click', () => abrirModalDetalhe(c.id));
+
+        // Adiciona no grid correto
+        if (c.membro) {
+          gridMinhas.appendChild(card);
+        } else {
+          gridDescobrr.appendChild(card);
+        }
+      });
+
+      // Se não tem comunidades em alguma seção
+      if (gridMinhas.children.length === 0) {
+        gridMinhas.innerHTML = '<p style="color:var(--muted); font-size:0.85rem">Você não entrou em nenhuma comunidade ainda.</p>';
+      }
+    }
+
+
+    // ==========================================
+    // FUNÇÃO: toggleMembro(event, id)
+    // Entra ou sai de uma comunidade.
+    // "event.stopPropagation()" impede que o
+    // clique no botão abra o modal do card.
+    // ==========================================
+    function toggleMembro(event, id) {
+      event.stopPropagation(); // para o clique aqui, não propaga para o card
+
+      // Encontra a comunidade pelo id no array
+      // find() retorna o primeiro elemento que
+      // satisfaz a condição
+      const c = comunidades.find(x => x.id === id);
+      if (!c) return;
+
+      c.membro = !c.membro; // inverte true/false
+      c.membros += c.membro ? 1 : -1; // atualiza contagem
+
+      renderComunidades(comunidades); // redesenha tudo
+
+      // Se o modal estiver aberto para essa comunidade, atualiza ele
+      if (comunidadeAtual && comunidadeAtual.id === id) {
+        abrirModalDetalhe(id);
+      }
+    }
+
+
+    // ==========================================
+    // FUNÇÃO: abrirModalDetalhe(id)
+    // Preenche e abre o modal com os dados
+    // da comunidade clicada.
+    // ==========================================
+    function abrirModalDetalhe(id) {
+      const c = comunidades.find(x => x.id === id);
+      if (!c) return;
+
+      comunidadeAtual = c;
+
+      // Preenche os elementos do modal com os dados
+      document.getElementById('modal-banner').style.background = c.cor;
+      document.getElementById('modal-banner').childNodes[0].textContent = c.emoji + ' ';
+      document.getElementById('modal-cat').textContent      = c.categoria.toUpperCase();
+      document.getElementById('modal-name').textContent     = c.nome;
+      document.getElementById('modal-desc').textContent     = c.desc;
+      document.getElementById('modal-members').textContent  = c.membros.toLocaleString('pt-BR');
+      document.getElementById('modal-posts-count').textContent = c.posts;
+      document.getElementById('modal-age').textContent      = c.anos;
+
+      // Preenche posts recentes
+      const lista = document.getElementById('modal-posts-list');
+      lista.innerHTML = c.posts_recentes.map(p => `
+        <div class="modal-post-item">
+          <div class="modal-post-avatar">${p.user}</div>
+          <div>
+            <div class="modal-post-name">${p.nome}</div>
+            <div class="modal-post-text">${p.texto}</div>
+          </div>
+        </div>
+      `).join(''); // join('') une o array em uma string
+
+      // Botão de entrar/sair
+      const btn = document.getElementById('btn-join-modal');
+      if (c.membro) {
+        btn.textContent = 'Sair da comunidade';
+        btn.className   = 'btn-join-modal leave';
+      } else {
+        btn.textContent = '✦ Entrar na comunidade';
+        btn.className   = 'btn-join-modal join';
+      }
+
+      btn.onclick = () => toggleMembro({ stopPropagation: () => {} }, id);
+
+      // Abre o modal
+      document.getElementById('modal-detalhe').classList.add('open');
+    }
+
+
+    // ==========================================
+    // FUNÇÃO: fecharModal(id)
+    // Fecha um modal pelo seu id.
+    // ==========================================
+    function fecharModal(id) {
+      document.getElementById(id).classList.remove('open');
+      comunidadeAtual = null;
+    }
+
+
+    // ==========================================
+    // FUNÇÃO: fecharModalDetalhe(event)
+    // Fecha o modal se o usuário clicar fora dele
+    // (no overlay escuro).
+    // ==========================================
+    function fecharModalDetalhe(event) {
+      // event.target = elemento que foi clicado
+      // Se clicou no overlay (não no modal em si), fecha
+      if (event.target.classList.contains('modal-overlay')) {
+        event.target.classList.remove('open');
+        comunidadeAtual = null;
+      }
+    }
+
+
+    // ==========================================
+    // FUNÇÃO: filtrarCategoria(cat, btn)
+    // Filtra os cards pela categoria clicada.
+    // ==========================================
+    function filtrarCategoria(cat, btn) {
+      categoriaAtiva = cat;
+
+      // Remove "active" de todos os botões de filtro
+      document.querySelectorAll('.filter-btn')
+              .forEach(b => b.classList.remove('active'));
+
+      // Ativa o botão clicado
+      btn.classList.add('active');
+
+      renderComunidades(comunidades);
+    }
+
+
+    // ==========================================
+    // FUNÇÃO: filtrarBusca(texto)
+    // Filtra comunidades pelo texto digitado
+    // na barra de busca da navbar.
+    // ==========================================
+    function filtrarBusca(texto) {
+      const termo = texto.toLowerCase(); // toLowerCase = tudo minúsculo para comparar
+
+      // filter() cria um novo array só com os
+      // itens que passam na condição
+      const resultado = comunidades.filter(c =>
+        c.nome.toLowerCase().includes(termo) ||
+        c.desc.toLowerCase().includes(termo)
+      );
+
+      renderComunidades(resultado);
+    }
+
+
+    // ==========================================
+    // FUNÇÃO: abrirModalCriar()
+    // Abre o modal de criar nova comunidade.
+    // ==========================================
+    function abrirModalCriar() {
+      document.getElementById('modal-criar').classList.add('open');
+    }
+
+
+    // ==========================================
+    // FUNÇÃO: selecionarEmoji(el, emoji)
+    // Marca o emoji escolhido no formulário
+    // de criar comunidade.
+    // ==========================================
+    function selecionarEmoji(el, emoji) {
+      // Remove seleção de todos
+      document.querySelectorAll('.emoji-option')
+              .forEach(e => e.classList.remove('selected'));
+
+      // Seleciona o clicado
+      el.classList.add('selected');
+      emojiSelecionado = emoji;
+    }
+
+
+    // ==========================================
+    // FUNÇÃO: criarComunidade()
+    // Lê os dados do formulário e cria uma nova
+    // comunidade, adicionando ao array e
+    // redesenhando os cards.
+    // ==========================================
+    function criarComunidade() {
+      const nome = document.getElementById('criar-nome').value.trim();
+      const desc = document.getElementById('criar-desc').value.trim();
+      const cat  = document.getElementById('criar-cat').value;
+
+      if (nome.length === 0) {
+        document.getElementById('criar-nome').focus();
+        document.getElementById('criar-nome').style.borderColor = 'var(--accent3)';
+        return;
+      }
+
+      // Cria novo objeto de comunidade
+      const nova = {
+        id: Date.now(), // id único baseado no tempo
+        nome,
+        emoji: emojiSelecionado,
+        categoria: cat,
+        desc: desc || 'Sem descrição ainda.',
+        membros: 1,
+        posts: 0,
+        anos: 0,
+        membro: true, // criador já entra automaticamente
+        cor: 'linear-gradient(135deg, #1a1a1a, #2a2a2a)',
+        posts_recentes: []
+      };
+
+      // unshift() adiciona no início do array
+      comunidades.unshift(nova);
+
+      renderComunidades(comunidades);
+      fecharModal('modal-criar');
+
+      // Limpa o formulário
+      document.getElementById('criar-nome').value = '';
+      document.getElementById('criar-desc').value = '';
+    }
+
+
+    // Fecha modais com a tecla Escape
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        fecharModal('modal-detalhe');
+        fecharModal('modal-criar');
+      }
+    });
+
+
+    // Renderiza os cards ao carregar a página
+    renderComunidades(comunidades);
+
+  </script>
+
+</body>
+</html>

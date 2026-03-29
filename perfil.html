@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Orbita — Perfil</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,13,15,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+
+    .nav-inner {
+      max-width: 1000px; margin: 0 auto;
+      display: flex; align-items: center;
+      justify-content: space-between; height: 60px;
+    }
+
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .page {
+      max-width: 1000px; margin: 0 auto;
+      padding: 32px 24px;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 24px; align-items: start;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      display: flex; flex-direction: column; gap: 16px;
+      position: sticky; top: 80px;
+    }
+
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .profile-cover {
+      height: 90px;
+      background: linear-gradient(135deg, #1a2a0a, #0a1a20, #1a0a1a);
+      position: relative;
+    }
+
+    .cover-pattern {
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 50%, rgba(232,255,90,0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 50%, rgba(90,255,184,0.1) 0%, transparent 50%);
+    }
+
+    .profile-body { padding: 0 20px 20px; }
+
+    .avatar-wrap { margin-top: -32px; margin-bottom: 12px; position: relative; display: inline-block; }
+
+    .avatar-main {
+      width: 64px; height: 64px; border-radius: 50%;
+      border: 3px solid var(--bg); background: var(--surface2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem;
+    }
+
+    .avatar-status {
+      position: absolute; bottom: 2px; right: 2px;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--accent2); border: 2px solid var(--bg);
+    }
+
+    .profile-name {
+      font-family: var(--font-display); font-weight: 700; font-size: 1.1rem;
+    }
+
+    .profile-handle { font-size: 0.8rem; color: var(--muted); margin-bottom: 10px; }
+
+    .profile-bio {
+      font-size: 0.85rem; color: var(--muted);
+      line-height: 1.6; margin-bottom: 14px;
+      min-height: 40px;
+    }
+
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+
+    .divider { height: 1px; background: var(--border); margin: 14px 0; }
+
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; text-align: center; }
+    .stat-num { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; }
+    .stat-label { font-size: 0.7rem; color: var(--muted); }
+
+    .profile-actions { display: flex; gap: 8px; margin-top: 16px; }
+
+    .btn-action {
+      flex: 1; padding: 9px 12px; border-radius: 10px;
+      font-size: 0.82rem; font-family: var(--font-body); font-weight: 500;
+      cursor: pointer; border: none; transition: all 0.2s; text-align: center;
+    }
+
+    .btn-action.primary { background: var(--accent); color: #000; }
+    .btn-action.primary:hover { box-shadow: 0 4px 16px rgba(232,255,90,0.2); transform: translateY(-1px); }
+    .btn-action.outline { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .btn-action.outline:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+    /* MODAL DE EDITAR PERFIL */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+      z-index: 200; display: flex; align-items: center; justify-content: center;
+      padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.25s;
+    }
+
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; width: 100%; max-width: 480px;
+      max-height: 90vh; overflow-y: auto;
+      transform: translateY(20px) scale(0.97); transition: transform 0.25s;
+    }
+
+    .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+
+    .modal-header {
+      padding: 20px 24px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .modal-title { font-family: var(--font-display); font-weight: 700; font-size: 1rem; }
+
+    .modal-close {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--muted); font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+    }
+
+    .modal-close:hover { color: var(--text); }
+    .modal-body { padding: 24px; }
+
+    /* CONTEÚDO PRINCIPAL */
+    .main-content { display: flex; flex-direction: column; gap: 16px; }
+
+    /* CAIXA DE NOVO POST */
+    .post-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px;
+      animation: fadeUp 0.5s 0.1s ease both;
+    }
+
+    .post-input-row { display: flex; gap: 12px; align-items: flex-start; }
+
+    .post-avatar-sm {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--surface2); display: flex;
+      align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+
+    .post-textarea {
+      flex: 1; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 12px;
+      padding: 11px 14px; color: var(--text);
+      font-family: var(--font-body); font-size: 0.88rem;
+      resize: none; outline: none; min-height: 72px;
+      transition: border-color 0.2s, min-height 0.3s;
+    }
+
+    .post-textarea::placeholder { color: var(--muted); }
+    .post-textarea:focus { border-color: var(--accent); min-height: 100px; }
+
+    .post-bottom {
+      display: flex; align-items: center;
+      justify-content: flex-end; margin-top: 12px; gap: 12px;
+    }
+
+    .post-submit {
+      padding: 8px 18px; background: var(--accent); color: #000;
+      border: none; border-radius: 999px;
+      font-family: var(--font-body); font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+
+    .post-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* POSTS */
+    .post-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px;
+      transition: border-color 0.2s; animation: fadeUp 0.4s ease both;
+    }
+
+    .post-card:hover { border-color: rgba(255,255,255,0.1); }
+
+    .post-text { font-size: 0.88rem; line-height: 1.7; color: #d0d0d0; margin-bottom: 14px; white-space: pre-wrap; }
+
+    .post-meta-row {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem; color: var(--muted);
+      padding-top: 12px; border-top: 1px solid var(--border);
+    }
+
+    .post-actions { display: flex; gap: 8px; }
+
+    .reaction-btn {
+      display: flex; align-items: center; gap: 5px;
+      padding: 5px 11px; border-radius: 8px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--muted); font-size: 0.78rem;
+      font-family: var(--font-body); cursor: pointer; transition: all 0.2s;
+    }
+
+    .reaction-btn:hover { background: var(--surface2); color: var(--text); }
+    .reaction-btn.active { background: rgba(232,255,90,0.08); border-color: rgba(232,255,90,0.3); color: var(--accent); }
+
+    .empty-state {
+      text-align: center; padding: 60px 20px;
+      color: var(--muted); font-size: 0.88rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    @media (max-width: 768px) {
+      .page { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-dot"></span>
+        Orbita
+      </a>
+      <div class="nav-actions">
+        <a href="feed.html"        class="nav-btn">🏠 Feed</a>
+        <a href="comunidades.html" class="nav-btn">🌐 Comunidades</a>
+        <button class="nav-btn primary" onclick="Orbita.auth.logout()">Sair</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- LAYOUT -->
+  <div class="page">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="card">
+        <div class="profile-cover">
+          <div class="cover-pattern"></div>
+        </div>
+        <div class="profile-body">
+          <div class="avatar-wrap">
+            <div class="avatar-main" id="perfil-avatar">🙂</div>
+            <div class="avatar-status"></div>
+          </div>
+
+          <div class="profile-name"  id="perfil-nome">Carregando...</div>
+          <div class="profile-handle" id="perfil-handle"></div>
+          <div class="profile-bio"   id="perfil-bio"></div>
+
+          <div class="tags" id="perfil-tags"></div>
+
+          <div class="divider"></div>
+
+          <div class="stats">
+            <div>
+              <div class="stat-num" id="stat-posts">0</div>
+              <div class="stat-label">Posts</div>
+            </div>
+            <div>
+              <div class="stat-num" id="stat-seguidores">0</div>
+              <div class="stat-label">Seguidores</div>
+            </div>
+            <div>
+              <div class="stat-num" id="stat-seguindo">0</div>
+              <div class="stat-label">Seguindo</div>
+            </div>
+          </div>
+
+          <div class="profile-actions">
+            <button class="btn-action primary" onclick="abrirModalEditar()">✏️ Editar</button>
+            <button class="btn-action outline" onclick="Orbita.auth.logout()">Sair</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CONTEÚDO -->
+    <main class="main-content">
+
+      <!-- Caixa de post -->
+      <div class="post-box">
+        <div class="post-input-row">
+          <div class="post-avatar-sm" id="post-avatar">🙂</div>
+          <textarea
+            class="post-textarea"
+            id="post-input"
+            placeholder="O que está acontecendo?"
+            maxlength="280"
+          ></textarea>
+        </div>
+        <div class="post-bottom">
+          <button class="post-submit" id="btn-publicar"
+                  onclick="publicarPost()" disabled>
+            Publicar →
+          </button>
+        </div>
+      </div>
+
+      <!-- Posts do usuário -->
+      <div id="posts-lista"></div>
+
+    </main>
+  </div>
+
+
+  <!-- MODAL: EDITAR PERFIL -->
+  <div class="modal-overlay" id="modal-editar" onclick="fecharModalSeOverlay(event)">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">✏️ Editar perfil</div>
+        <button class="modal-close" onclick="fecharModal()">✕</button>
+      </div>
+      <div class="modal-body">
+
+        <div class="field">
+          <label for="edit-nome">Nome</label>
+          <input type="text" id="edit-nome" placeholder="Seu nome"/>
+        </div>
+
+        <div class="field">
+          <label for="edit-bio">Bio</label>
+          <textarea id="edit-bio" placeholder="Fale sobre você..." style="min-height:80px; resize:none"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="edit-cidade">Cidade</label>
+          <input type="text" id="edit-cidade" placeholder="Ex: São Paulo, BR"/>
+        </div>
+
+        <div class="field">
+          <label for="edit-avatar">Avatar (emoji)</label>
+          <input type="text" id="edit-avatar" placeholder="Ex: 🧑‍💻" maxlength="4"/>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:24px">
+          <button class="btn-action outline" style="flex:1" onclick="fecharModal()">Cancelar</button>
+          <button class="btn-action primary" style="flex:2" onclick="salvarPerfil()">Salvar →</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <script src="app.js"></script>
+  <script>
+
+    // Proteção de rota
+    if (!Orbita.auth.estaLogado()) {
+      window.location.href = 'login.html';
+    }
+
+    const token  = Orbita.store.ler('token');
+    let   perfil = null; // dados do usuário carregados da API
+
+
+    // ==========================================
+    // FUNÇÃO: carregarPerfil()
+    // Busca os dados do usuário logado na API
+    // ==========================================
+    async function carregarPerfil() {
+      try {
+        const resposta = await fetch(`${API_URL}/api/auth/eu`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+
+        const dados = await resposta.json();
+
+        if (!resposta.ok) {
+          Orbita.toast('Erro ao carregar perfil', 'error');
+          return;
+        }
+
+        perfil = dados.usuario;
+        renderizarPerfil(perfil);
+        carregarPosts(perfil.handle);
+
+      } catch (e) {
+        Orbita.toast('Servidor offline', 'error');
+      }
+    }
+
+
+    // ==========================================
+    // FUNÇÃO: renderizarPerfil(usuario)
+    // Preenche os elementos da sidebar com
+    // os dados reais do usuário
+    // ==========================================
+    function renderizarPerfil(u) {
+      document.getElementById('perfil-avatar').textContent  = u.avatar  || '🙂';
+      document.getElementById('post-avatar').textContent    = u.avatar  || '🙂';
+      document.getElementById('perfil-nome').textContent    = u.nome;
+      document.getElementById('perfil-handle').textContent  = `@${u.handle} · ${u.cidade || 'Sem cidade'}`;
+      document.getElementById('perfil-bio').textContent     = u.bio || 'Sem bio ainda. Clique em Editar para adicionar!';
+      document.getElementById('stat-seguidores').textContent = '0';
+      document.getElementById('stat-seguindo').textContent   = '0';
+
+      // Atualiza o título da página
+      document.title = `Orbita — ${u.nome}`;
+    }
+
+
+    // ==========================================
+    // FUNÇÃO: carregarPosts(handle)
+    // Busca os posts do usuário na API
+    // ==========================================
+    async function carregarPosts(handle) {
+      const lista = document.getElementById('posts-lista');
+
+      lista.innerHTML = `
+        <div class="post-card">
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line" style="width:70%;margin-bottom:0"></div>
+        </div>
+      `;
+
+      try {
+        // Busca todos os posts e filtra pelo autor
+        const resposta = await fetch(`${API_URL}/api/posts`);
+        const dados    = await resposta.json();
+
+        if (!resposta.ok) throw new Error();
+
+        // Filtra só os posts do usuário logado
+        const meusPosts = dados.posts.filter(p => p.autor_handle === handle);
+
+        // Atualiza contador de posts
+        document.getElementById('stat-posts').textContent = meusPosts.length;
+
+        if (meusPosts.length === 0) {
+          lista.innerHTML = `
+            <div class="empty-state">
+              <div style="font-size:2rem; margin-bottom:12px">📝</div>
+              <p>Você ainda não publicou nada.</p>
+              <p style="margin-top:8px">Use a caixa acima para começar!</p>
+            </div>
+          `;
+          return;
+        }
+
+        lista.innerHTML = '';
+        meusPosts.forEach((post, i) => {
+          const tempo = Orbita.format.tempo(new Date(post.criado_em));
+          lista.insertAdjacentHTML('beforeend', `
+            <div class="post-card" id="card-${post.id}" style="animation-delay:${i * 0.07}s">
+              <div class="post-text">${post.texto}</div>
+              <div class="post-meta-row">
+                <span>${tempo}</span>
+                <div class="post-actions">
+                  <button class="reaction-btn ${post.curtido ? 'active' : ''}"
+                          onclick="curtirPost(${post.id})">
+                    ✦ <span id="count-${post.id}">${post.curtidas}</span>
+                  </button>
+                  <button class="reaction-btn" onclick="deletarPost(${post.id})">
+                    🗑️ Deletar
+                  </button>
+                </div>
+              </div>
+            </div>
+          `);
+        });
+
+      } catch (e) {
+        lista.innerHTML = `<div class="empty-state">Erro ao carregar posts.</div>`;
+      }
+    }
+
+
+    // ==========================================
+    // FUNÇÃO: publicarPost()
+    // ==========================================
+    async function publicarPost() {
+      const input = document.getElementById('post-input');
+      const texto = input.value.trim();
+      const btn   = document.getElementById('btn-publicar');
+
+      if (!texto) return;
+
+      btn.disabled    = true;
+      btn.textContent = 'Publicando...';
+
+      try {
+        const resposta = await fetch(`${API_URL}/api/posts`, {
+          method:  'POST',
+          headers: {
+            'Content-Type':  'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ texto }),
+        });
+
+        const dados = await resposta.json();
+
+        if (!resposta.ok) {
+          Orbita.toast(dados.erro || 'Erro ao publicar', 'error');
+          return;
+        }
+
+        input.value = '';
+        Orbita.toast('Post publicado! ✦', 'success');
+        carregarPosts(perfil.handle);
+
+      } catch (e) {
+        Orbita.toast('Erro ao conectar ao servidor', 'error');
+      } finally {
+        btn.disabled    = false;
+        btn.textContent = 'Publicar →';
+        btn.disabled    = true;
+      }
+    }
+
+
+    // ==========================================
+    // FUNÇÃO: curtirPost(id)
+    // ==========================================
+    async function curtirPost(id) {
+      try {
+        const resposta = await fetch(`${API_URL}/api/posts/${id}/curtir`, {
+          method:  'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+
+        const dados = await resposta.json();
+        if (!resposta.ok) return;
+
+        const btn   = document.getElementById('like-' + id);
+        const count = document.getElementById('count-' + id);
+        if (btn)   btn.classList.toggle('active', dados.curtido);
+        if (count) count.textContent = dados.curtidas;
+
+      } catch (e) {
+        Orbita.toast('Erro ao curtir', 'error');
+      }
+    }
+
+
+    // ==========================================
+    // FUNÇÃO: deletarPost(id)
+    // ==========================================
+    async function deletarPost(id) {
+      if (!confirm('Deletar esse post?')) return;
+
+      try {
+        const resposta = await fetch(`${API_URL}/api/posts/${id}`, {
+          method:  'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+
+        if (!resposta.ok) {
+          Orbita.toast('Erro ao deletar', 'error');
+          return;
+        }
+
+        const card = document.getElementById('card-' + id);
+        card.style.opacity    = '0';
+        card.style.transform  = 'translateY(-8px)';
+        card.style.transition = 'all 0.3s ease';
+        setTimeout(() => {
+          card.remove();
+          document.getElementById('stat-posts').textContent =
+            parseInt(document.getElementById('stat-posts').textContent) - 1;
+        }, 300);
+
+        Orbita.toast('Post deletado', 'default');
+
+      } catch (e) {
+        Orbita.toast('Erro ao conectar ao servidor', 'error');
+      }
+    }
+
+
+    // ==========================================
+    // EDITAR PERFIL
+    // ==========================================
+    function abrirModalEditar() {
+      if (!perfil) return;
+
+      // Preenche o formulário com os dados atuais
+      document.getElementById('edit-nome').value   = perfil.nome   || '';
+      document.getElementById('edit-bio').value    = perfil.bio    || '';
+      document.getElementById('edit-cidade').value = perfil.cidade || '';
+      document.getElementById('edit-avatar').value = perfil.avatar || '';
+
+      document.getElementById('modal-editar').classList.add('open');
+    }
+
+    function fecharModal() {
+      document.getElementById('modal-editar').classList.remove('open');
+    }
+
+    function fecharModalSeOverlay(e) {
+      if (e.target.classList.contains('modal-overlay')) fecharModal();
+    }
+
+    async function salvarPerfil() {
+      const nome   = document.getElementById('edit-nome').value.trim();
+      const bio    = document.getElementById('edit-bio').value.trim();
+      const cidade = document.getElementById('edit-cidade').value.trim();
+      const avatar = document.getElementById('edit-avatar').value.trim();
+
+      try {
+        const resposta = await fetch(`${API_URL}/api/usuarios/perfil`, {
+          method:  'PUT',
+          headers: {
+            'Content-Type':  'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ nome, bio, cidade, avatar }),
+        });
+
+        const dados = await resposta.json();
+
+        if (!resposta.ok) {
+          Orbita.toast(dados.erro || 'Erro ao salvar', 'error');
+          return;
+        }
+
+        // Atualiza os dados locais
+        perfil = { ...perfil, nome, bio, cidade, avatar };
+
+        // Atualiza o localStorage
+        Orbita.store.salvar('usuario', { ...Orbita.store.ler('usuario'), nome, avatar });
+
+        renderizarPerfil(perfil);
+        fecharModal();
+        Orbita.toast('Perfil atualizado! ✦', 'success');
+
+      } catch (e) {
+        Orbita.toast('Erro ao conectar ao servidor', 'error');
+      }
+    }
+
+
+    // Habilita botão de publicar ao digitar
+    document.getElementById('post-input').addEventListener('input', function() {
+      document.getElementById('btn-publicar').disabled = this.value.trim().length === 0;
+    });
+
+    // Fecha modal com Escape
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') fecharModal();
+    });
+
+    // Carrega o perfil ao abrir a página
+    carregarPerfil();
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Orbita — Sua rede social</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    /* =============================================
+       VARIÁVEIS DE COR E TEMA
+       Aqui definimos as cores principais do projeto.
+       Usar variáveis facilita mudar o tema inteiro
+       só alterando um lugar.
+    ============================================= */
+    :root {
+      --bg: #0d0d0f;
+      --surface: #16161a;
+      --surface2: #1e1e24;
+      --accent: #e8ff5a;       /* amarelo-limão vibrante */
+      --accent2: #5affb8;      /* verde-menta */
+      --accent3: #ff5a8a;      /* rosa */
+      --text: #f0f0f0;
+      --muted: #888;
+      --border: rgba(255,255,255,0.07);
+      --radius: 16px;
+    }
+
+    /* =============================================
+       RESET E BASE
+       Remove estilos padrão do navegador e define
+       a base visual para toda a página.
+    ============================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* =============================================
+       FUNDO ANIMADO COM GRADIENTE
+       Cria uma atmosfera visual de "órbita espacial"
+       com círculos de luz que se movem suavemente.
+    ============================================= */
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .bg-glow::before {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,255,90,0.08) 0%, transparent 70%);
+      top: -200px; left: -100px;
+      animation: drift1 12s ease-in-out infinite alternate;
+    }
+
+    .bg-glow::after {
+      content: '';
+      position: absolute;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(90,255,184,0.06) 0%, transparent 70%);
+      bottom: -100px; right: -100px;
+      animation: drift2 15s ease-in-out infinite alternate;
+    }
+
+    @keyframes drift1 {
+      from { transform: translate(0, 0); }
+      to   { transform: translate(80px, 60px); }
+    }
+    @keyframes drift2 {
+      from { transform: translate(0, 0); }
+      to   { transform: translate(-60px, -40px); }
+    }
+
+    /* =============================================
+       LAYOUT PRINCIPAL
+       Container que centraliza o conteúdo e garante
+       que não fique largo demais em telas grandes.
+    ============================================= */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* =============================================
+       NAVBAR — barra de navegação no topo
+    ============================================= */
+    nav {
+      position: relative;
+      z-index: 10;
+      padding: 28px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.6rem;
+      letter-spacing: -1px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--accent3);
+      display: inline-block;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50%       { transform: scale(1.4); opacity: 0.6; }
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+      letter-spacing: 0.3px;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      background: var(--accent);
+      color: #000 !important;
+      padding: 8px 20px;
+      border-radius: 999px;
+      font-weight: 500;
+      font-size: 0.85rem !important;
+      transition: transform 0.2s, box-shadow 0.2s !important;
+    }
+
+    .nav-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 20px rgba(232,255,90,0.3);
+      color: #000 !important;
+    }
+
+    /* =============================================
+       HERO — seção principal, primeira coisa que
+       o usuário vê ao entrar no site.
+    ============================================= */
+    .hero {
+      padding: 80px 0 60px;
+      text-align: center;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 32px;
+      letter-spacing: 0.5px;
+    }
+
+    .hero-badge span {
+      color: var(--accent2);
+      font-weight: 500;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 24px;
+    }
+
+    /* clamp() = tamanho responsivo: mínimo, ideal, máximo */
+
+    h1 em {
+      font-style: normal;
+      color: var(--accent);
+      position: relative;
+    }
+
+    h1 em::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 0; right: 0;
+      height: 3px;
+      background: var(--accent3);
+      border-radius: 2px;
+      opacity: 0.6;
+    }
+
+    .hero-sub {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 520px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    /* =============================================
+       BOTÕES DE AÇÃO
+    ============================================= */
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(232,255,90,0.25);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface2);
+      border-color: rgba(255,255,255,0.15);
+    }
+
+    /* =============================================
+       PREVIEW DO APP — mockup visual
+    ============================================= */
+    .app-preview {
+      margin: 70px auto 0;
+      max-width: 780px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+
+    .app-bar {
+      background: var(--surface2);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .app-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .app-dots span {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .app-dots span:nth-child(1) { background: var(--accent3); }
+    .app-dots span:nth-child(2) { background: var(--accent); }
+    .app-dots span:nth-child(3) { background: var(--accent2); }
+
+    .app-url {
+      flex: 1;
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* Feed simulado dentro do mockup */
+    .mock-feed {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .mock-post {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .mock-post:nth-child(1) { animation-delay: 0.3s; }
+    .mock-post:nth-child(2) { animation-delay: 0.45s; }
+    .mock-post:nth-child(3) { animation-delay: 0.6s; }
+
+    .mock-avatar {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .mock-content { flex: 1; }
+
+    .mock-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+
+    .mock-text {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .mock-bar {
+      height: 8px;
+      border-radius: 4px;
+      background: var(--border);
+      margin-top: 8px;
+    }
+
+    .mock-bar.short { width: 55%; }
+    .mock-bar.long  { width: 80%; }
+
+    /* =============================================
+       SEÇÃO DE FUNCIONALIDADES
+    ============================================= */
+    .features {
+      padding: 100px 0;
+      animation: fadeUp 0.8s 0.4s ease both;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 60px;
+    }
+
+    /* Grid de cards — 3 colunas em telas grandes */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: border-color 0.3s, transform 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Linha colorida no topo de cada card */
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--card-color, var(--accent));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(255,255,255,0.15);
+      transform: translateY(-4px);
+    }
+
+    .feature-card:hover::before { opacity: 1; }
+
+    .feature-icon {
+      font-size: 1.8rem;
+      margin-bottom: 16px;
+    }
+
+    .feature-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .feature-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* =============================================
+       SEÇÃO DE CADASTRO
+    ============================================= */
+    .signup-section {
+      padding: 60px 0 100px;
+    }
+
+    .signup-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 56px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .signup-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(232,255,90,0.15), transparent 50%, rgba(90,255,184,0.1));
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .signup-card > * { position: relative; z-index: 1; }
+
+    .signup-card h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+    }
+
+    .signup-card p {
+      color: var(--muted);
+      margin-bottom: 32px;
+      font-size: 0.95rem;
+    }
+
+    /* =============================================
+       FORMULÁRIO DE CADASTRO
+    ============================================= */
+    .form-row {
+      display: flex;
+      gap: 12px;
+      max-width: 460px;
+      margin: 0 auto;
+    }
+
+    /* input = campo de texto */
+    .form-row input {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 14px 20px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-row input::placeholder { color: var(--muted); }
+
+    .form-row input:focus {
+      border-color: var(--accent);
+    }
+
+    /* =============================================
+       RODAPÉ
+    ============================================= */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: gap;
+      gap: 16px;
+    }
+
+    .footer-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--accent);
+    }
+
+    .footer-text {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Fundo com brilhos animados -->
+  <div class="bg-glow"></div>
+
+  <!-- ============================================
+       NAVBAR
+  ============================================= -->
+  <div class="container">
+    <nav>
+      <div class="logo">
+        <span class="logo-dot"></span>
+        Orbita
+      </div>
+      <ul class="nav-links">
+        <li><a href="#funcionalidades">Funcionalidades</a></li>
+        <li><a href="#sobre">Sobre</a></li>
+        <li><a href="#cadastro" class="nav-cta">Entrar →</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <!-- ============================================
+       HERO — seção principal
+  ============================================= -->
+  <div class="container">
+    <section class="hero">
+      <div class="hero-badge">
+        ✦ <span>Nova rede social</span> — conecte-se de verdade
+      </div>
+
+      <h1>
+        Sua órbita,<br/>
+        suas <em>conexões</em>
+      </h1>
+
+      <p class="hero-sub">
+        Uma rede social feita para pessoas reais. Perfis, amigos,
+        comunidades e um feed que faz sentido — sem algoritmo te manipulando.
+      </p>
+
+      <div class="btn-group">
+        <a href="#cadastro" class="btn btn-primary">
+          ✦ Criar minha conta
+        </a>
+        <a href="#funcionalidades" class="btn btn-secondary">
+          Ver funcionalidades
+        </a>
+      </div>
+
+      <!-- Mockup do app -->
+      <div class="app-preview">
+        <div class="app-bar">
+          <div class="app-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="app-url">orbita.app/feed</div>
+        </div>
+        <div class="mock-feed">
+
+          <!-- Post simulado 1 -->
+          <div class="mock-post">
+            <svg class="mock-avatar" viewBox="0 0 38 38">
+              <circle cx="19" cy="19" r="19" fill="#2a2a35"/>
+              <circle cx="19" cy="15" r="7" fill="#e8ff5a" opacity="0.8"/>
+              <ellipse cx="19" cy="32" rx="12" ry="8" fill="#e8ff5a" opacity="0.4"/>
+            </svg>
+            <div class="mock-content">
+              <div class="mock-name">Ana Paula</div>
+              <div class="mock-text">Acabei de entrar no Orbita! Alguém mais aqui da comunidade de design? 🎨</div>
+            </div>
+          </div>
+
+          <!-- Post simulado 2 -->
+          <div class="mock-post">
+            <svg class="mock-avatar" viewBox="0 0 38 38">
+              <circle cx="19" cy="19" r="19" fill="#1e2a1e"/>
+              <circle cx="19" cy="15" r="7" fill="#5affb8" opacity="0.8"/>
+              <ellipse cx="19" cy="32" rx="12" ry="8" fill="#5affb8" opacity="0.4"/>
+            </svg>
+            <div class="mock-content">
+              <div class="mock-name">Carlos Dev</div>
+              <div class="mock-text">Entrei na comunidade "Programadores BR" — que saudade dessa vibe do Orkut 🚀</div>
+            </div>
+          </div>
+
+          <!-- Post simulado 3 -->
+          <div class="mock-post">
+            <svg class="mock-avatar" viewBox="0 0 38 38">
+              <circle cx="19" cy="19" r="19" fill="#2a1e2a"/>
+              <circle cx="19" cy="15" r="7" fill="#ff5a8a" opacity="0.8"/>
+              <ellipse cx="19" cy="32" rx="12" ry="8" fill="#ff5a8a" opacity="0.4"/>
+            </svg>
+            <div class="mock-content">
+              <div class="mock-name">Letícia M.</div>
+              <div class="mock-text">Atualizei meu perfil! Passem lá pra me adicionar 💫</div>
+              <div class="mock-bar long"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============================================
+       FUNCIONALIDADES
+  ============================================= -->
+  <div class="container" id="funcionalidades">
+    <section class="features">
+      <div class="section-label">O que tem no Orbita</div>
+      <h2 class="section-title">Tudo que você precisa<br/>para se conectar</h2>
+
+      <div class="features-grid">
+
+        <div class="feature-card" style="--card-color: var(--accent)">
+          <div class="feature-icon">👤</div>
+          <div class="feature-name">Perfil completo</div>
+          <p class="feature-desc">
+            Foto, bio, interesses, cidade. Seu espaço na rede para se apresentar do jeito que quiser.
+          </p>
+        </div>
+
+        <div class="feature-card" style="--card-color: var(--accent2)">
+          <div class="feature-icon">🤝</div>
+          <div class="feature-name">Lista de amigos</div>
+          <p class="feature-desc">
+            Adicione pessoas, veja quem vocês têm em comum e construa sua rede com intenção.
+          </p>
+        </div>
+
+        <div class="feature-card" style="--card-color: var(--accent3)">
+          <div class="feature-icon">📰</div>
+          <div class="feature-name">Feed cronológico</div>
+          <p class="feature-desc">
+            Posts dos seus amigos em ordem do tempo. Sem algoritmo, sem manipulação — só o que importa.
+          </p>
+        </div>
+
+        <div class="feature-card" style="--card-color: #a78bfa">
+          <div class="feature-icon">🌐</div>
+          <div class="feature-name">Comunidades</div>
+          <p class="feature-desc">
+            Grupos por interesse: tecnologia, música, esporte, games. Encontre seu povo.
+          </p>
+        </div>
+
+        <div class="feature-card" style="--card-color: #fb923c">
+          <div class="feature-icon">💬</div>
+          <div class="feature-name">Recados (em breve)</div>
+          <p class="feature-desc">
+            Deixe um recado no perfil de alguém — como nos velhos tempos, mas com visual novo.
+          </p>
+        </div>
+
+        <div class="feature-card" style="--card-color: var(--accent2)">
+          <div class="feature-icon">🔒</div>
+          <div class="feature-name">Privacidade real</div>
+          <p class="feature-desc">
+            Seus dados são seus. Sem anúncios, sem venda de informações. Só você decide o que compartilha.
+          </p>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- ============================================
+       CADASTRO
+  ============================================= -->
+  <div class="container" id="cadastro">
+    <section class="signup-section">
+      <div class="signup-card">
+        <div class="section-label">Comece agora</div>
+        <h2>Crie sua conta<br/>gratuitamente</h2>
+        <p>Digite seu e-mail e embarque no Orbita.</p>
+
+        <div class="form-row">
+          <input type="email" placeholder="seu@email.com"/>
+          <button class="btn btn-primary">Entrar →</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============================================
+       RODAPÉ
+  ============================================= -->
+  <div class="container">
+    <footer>
+      <div class="footer-logo">✦ Orbita</div>
+      <div class="footer-text">Feito com 💛 — projeto em desenvolvimento</div>
+      <div class="footer-text">© 2025 Orbita</div>
+    </footer>
+  </div>
+
+</body>
+</html>
