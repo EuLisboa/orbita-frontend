@@ -312,6 +312,22 @@
 }
 
 .comment-text { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+.notif-badge {
+  position: absolute;
+  top: 2px; right: 2px;
+  min-width: 16px; height: 16px;
+  border-radius: 999px;
+  background: var(--accent3);
+  border: 2px solid var(--bg);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+}
   </style>
 </head>
 <body>
@@ -330,10 +346,14 @@
       <a href="perfil.html"      class="nav-link">👤 Perfil</a>
       </div>
       <div style="display:flex; align-items:center; gap:8px; flex-shrink:0">
-        <a href="perfil.html" class="nav-avatar" id="nav-avatar">🙂</a>
-        <button class="nav-btn" onclick="Orbita.auth.logout()">Sair</button>
+       <button class="nav-icon-btn" title="Notificações" onclick="abrirNotificacoes()" id="btn-notif" style="position:relative">
+        🔔
+       <span class="notif-badge" id="notif-badge" style="display:none"></span>
+       </button>
+       <a href="perfil.html" class="nav-avatar" id="nav-avatar">🙂</a>
+       <button class="nav-btn" onclick="Orbita.auth.logout()">Sair</button>
       </div>
-    </div>
+      </div>
   </nav>
 
   <!-- LAYOUT 3 COLUNAS -->
@@ -606,6 +626,10 @@ async function enviarComentario(postId) {
           </div>
         `;
       }
+
+      // Verifica notificações ao carregar e a cada 30 segundos
+          verificarNotificacoes();
+          setInterval(verificarNotificacoes, 30000);
     }
 
 
@@ -813,6 +837,129 @@ async function enviarComentario(postId) {
 
     // Carrega o feed ao abrir a página
     carregarFeed();
+
+    // ==========================================
+// NOTIFICAÇÕES
+// ==========================================
+
+// Ícones por tipo
+const notifIcones = {
+  curtida:    '✦',
+  comentario: '💬',
+  seguidor:   '👤',
+};
+
+// Verifica notificações não lidas ao carregar
+async function verificarNotificacoes() {
+  try {
+    const resposta = await fetch(`${API_URL}/api/notificacoes/nao-lidas`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    const dados = await resposta.json();
+
+    const badge = document.getElementById('notif-badge');
+    if (dados.total > 0) {
+      badge.style.display = 'flex';
+      badge.textContent   = dados.total > 9 ? '9+' : dados.total;
+    } else {
+      badge.style.display = 'none';
+    }
+  } catch (e) {}
+}
+
+async function abrirNotificacoes() {
+  document.getElementById('modal-notif').classList.add('open');
+  const lista = document.getElementById('notif-lista');
+  lista.innerHTML = '<div style="padding:20px"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
+
+  try {
+    const resposta = await fetch(`${API_URL}/api/notificacoes`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    const dados = await resposta.json();
+
+    if (dados.notificacoes.length === 0) {
+      lista.innerHTML = `
+        <div style="text-align:center;padding:40px;color:var(--muted);font-size:0.88rem">
+          <div style="font-size:2rem;margin-bottom:12px">🔔</div>
+          <p>Nenhuma notificação ainda.</p>
+        </div>
+      `;
+      return;
+    }
+
+    lista.innerHTML = dados.notificacoes.map(n => `
+      <div style="
+        display:flex; align-items:center; gap:14px;
+        padding:14px 20px; border-bottom:1px solid var(--border);
+        background:${n.lida ? 'transparent' : 'rgba(232,255,90,0.03)'};
+        cursor:pointer; transition:background 0.2s;
+      " onclick="clicarNotificacao(${n.id}, ${n.origem_id}, '${n.tipo}')">
+        <div style="
+          width:38px; height:38px; border-radius:50%;
+          background:var(--surface2); display:flex;
+          align-items:center; justify-content:center; font-size:1rem; flex-shrink:0;
+        ">${notifIcones[n.tipo] || '🔔'}</div>
+        <div style="flex:1">
+          <div style="font-size:0.85rem;color:var(--text);line-height:1.4">${n.mensagem}</div>
+          <div style="font-size:0.72rem;color:var(--muted);margin-top:3px">
+            ${Orbita.format.tempo(new Date(n.criado_em))}
+          </div>
+        </div>
+        ${!n.lida ? '<div style="width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0"></div>' : ''}
+      </div>
+    `).join('');
+
+    // Marca como lidas após abrir
+    marcarTodasLidas();
+
+  } catch (e) {
+    lista.innerHTML = '<div style="padding:20px;color:var(--muted)">Erro ao carregar.</div>';
+  }
+}
+
+async function marcarTodasLidas() {
+  try {
+    await fetch(`${API_URL}/api/notificacoes/ler`, {
+      method:  'PUT',
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    document.getElementById('notif-badge').style.display = 'none';
+  } catch (e) {}
+}
+
+function clicarNotificacao(id, origemId, tipo) {
+  fecharModal('modal-notif');
+  if (tipo === 'curtida' || tipo === 'comentario') {
+    // Rola até o post no feed
+    const card = document.getElementById('card-' + origemId);
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else if (tipo === 'seguidor') {
+    window.location.href = `perfil.html?usuario=${origemId}`;
+  }
+}
+
+function fecharNotifSeOverlay(e) {
+  if (e.target.classList.contains('modal-overlay')) fecharModal('modal-notif');
+}
+
+  //<!-- MODAL: NOTIFICAÇÕES -->
+<div class="modal-overlay" id="modal-notif" onclick="fecharNotifSeOverlay(event)">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <div class="modal-title">🔔 Notificações</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="nav-btn" onclick="marcarTodasLidas()" style="font-size:0.75rem">
+          Marcar todas como lidas
+        </button>
+        <button class="modal-close" onclick="fecharModal('modal-notif')">✕</button>
+      </div>
+    </div>
+    <div class="modal-body" style="padding:0">
+      <div id="notif-lista"></div>
+    </div>
+  </div>
+</div>
 
   </script>
 </body>
