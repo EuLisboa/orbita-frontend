@@ -351,6 +351,11 @@
         <div class="modal-posts-title">Posts recentes</div>
         <div id="modal-posts-lista"></div>
         <button class="btn-join-modal" id="btn-join-modal"></button>
+        <a id="btn-ver-feed"
+        class="btn btn-secondary"
+        style="display:none; text-align:center; margin-top:10px; width:100%; padding:12px; border-radius:12px">
+        Ver feed da comunidade →
+        </a>
       </div>
     </div>
   </div>
@@ -605,6 +610,12 @@
         btn.textContent = c.sou_membro ? 'Sair da comunidade' : '✦ Entrar na comunidade';
         btn.className   = `btn-join-modal ${c.sou_membro ? 'leave' : 'join'}`;
         btn.onclick     = () => toggleMembro(c.id);
+
+        // Botão para ver o feed da comunidade
+       document.getElementById('btn-ver-feed').style.display = 'block';
+       document.getElementById('btn-ver-feed').onclick = () => {
+       window.location.href = `comunidade.html?id=${c.id}`;
+       };
 
         // Carrega posts da comunidade
         carregarPostsModal(id);
