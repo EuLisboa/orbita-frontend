@@ -248,6 +248,64 @@
       .feed-layout { grid-template-columns: 1fr; }
       .side-col { display: none; }
     }
+
+    .comments-section {
+  display: none; margin-top: 14px;
+  padding-top: 14px; border-top: 1px solid var(--border);
+}
+
+.comments-section.open { display: block; }
+
+.comment-input-row {
+  display: flex; gap: 10px;
+  align-items: center; margin-bottom: 12px;
+}
+
+.comment-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--surface2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; flex-shrink: 0;
+}
+
+.comment-input {
+  flex: 1; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 999px;
+  padding: 8px 14px; color: var(--text);
+  font-family: var(--font-body); font-size: 0.82rem;
+  outline: none; transition: border-color 0.2s;
+}
+
+.comment-input::placeholder { color: var(--muted); }
+.comment-input:focus { border-color: var(--accent2); }
+
+.comment-send {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: none; background: var(--accent2); color: #000;
+  font-size: 0.8rem; cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+
+.comment-send:hover { transform: scale(1.1); }
+
+.comment-item {
+  display: flex; gap: 10px; margin-bottom: 10px;
+  animation: fadeUp 0.3s ease both;
+}
+
+.comment-body {
+  flex: 1; background: var(--surface2);
+  border-radius: 12px; padding: 9px 13px;
+}
+
+.comment-name {
+  font-family: var(--font-display); font-size: 0.78rem;
+  font-weight: 600; margin-bottom: 2px;
+}
+
+.comment-text { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
   </style>
 </head>
 <body>
@@ -367,6 +425,62 @@
       outro:      'linear-gradient(135deg, #1a1a1a, #2a2a2a)',
     };
 
+    async function toggleComentarios(postId) {
+  const section = document.getElementById('comments-' + postId);
+  const aberto  = section.classList.contains('open');
+  section.classList.toggle('open', !aberto);
+  if (!aberto) {
+    await carregarComentarios(postId);
+    document.getElementById('cinput-' + postId).focus();
+  }
+}
+
+async function carregarComentarios(postId) {
+  const lista = document.getElementById('clist-' + postId);
+  lista.innerHTML = '<div class="skeleton-line" style="margin-top:8px"></div>';
+  try {
+    const resposta = await fetch(`${API_URL}/api/posts/${postId}`);
+    const dados    = await resposta.json();
+    if (!resposta.ok || dados.comentarios.length === 0) { lista.innerHTML = ''; return; }
+    lista.innerHTML = dados.comentarios.map(c => `
+      <div class="comment-item">
+        <div class="comment-avatar">${c.autor_avatar || '🙂'}</div>
+        <div class="comment-body">
+          <div class="comment-name">${c.autor_nome}</div>
+          <div class="comment-text">${c.texto}</div>
+        </div>
+      </div>
+    `).join('');
+  } catch (e) { lista.innerHTML = ''; }
+}
+
+async function enviarComentario(postId) {
+  const input = document.getElementById('cinput-' + postId);
+  const texto = input.value.trim();
+  if (!texto) return;
+  try {
+    const resposta = await fetch(`${API_URL}/api/posts/${postId}/comentarios`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body:    JSON.stringify({ texto }),
+    });
+    const dados = await resposta.json();
+    if (!resposta.ok) return;
+    const lista = document.getElementById('clist-' + postId);
+    lista.insertAdjacentHTML('beforeend', `
+      <div class="comment-item" style="animation: fadeUp 0.3s ease both">
+        <div class="comment-avatar">${euUsuario?.avatar || '🙂'}</div>
+        <div class="comment-body">
+          <div class="comment-name">${euUsuario?.nome || 'Você'}</div>
+          <div class="comment-text">${texto}</div>
+        </div>
+      </div>
+    `);
+    input.value = '';
+    const count = document.getElementById('ccount-' + postId);
+    if (count) count.textContent = parseInt(count.textContent) + 1;
+  } catch (e) { Orbita.toast('Erro ao enviar comentário', 'error'); }
+}
 
     // ==========================================
     // FUNÇÃO: carregarComunidade()
@@ -490,12 +604,28 @@
               </div>
               <div class="post-text">${post.texto}</div>
               <div class="post-reactions">
-                <button class="reaction-btn" id="like-${post.id}" onclick="curtirPost(${post.id})">
-                  ✦ <span id="count-${post.id}">${post.curtidas}</span>
-                </button>
-                <button class="reaction-btn">
-                  💬 <span>${post.comentarios}</span>
-                </button>
+                 <button class="reaction-btn" id="like-${post.id}" onclick="curtirPost(${post.id})">
+                 ✦ <span id="count-${post.id}">${post.curtidas}</span>
+                 </button>
+                 <button class="reaction-btn" onclick="toggleComentarios(${post.id})">
+                 💬 <span id="ccount-${post.id}">${post.comentarios}</span>
+                 </button>
+              </div>
+
+            <!-- Seção de comentários -->
+              <div class="comments-section" id="comments-${post.id}">
+              <div class="comment-input-row">
+              <div class="comment-avatar">${euUsuario?.avatar || '🙂'}</div>
+                <input
+                 class="comment-input"
+                 type="text"
+                 placeholder="Escreva um comentário..."
+                 id="cinput-${post.id}"
+                 onkeydown="if(event.key==='Enter') enviarComentario(${post.id})"
+                />
+                <button class="comment-send" onclick="enviarComentario(${post.id})">→</button>
+              </div>
+              <div id="clist-${post.id}"></div>
               </div>
             </div>
           `);
