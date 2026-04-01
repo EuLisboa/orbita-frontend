@@ -466,8 +466,8 @@
             onclick="toggleSeguir(${u.id})">
             ${seguindo ? '✓ Seguindo' : '+ Seguir'}
           </button>
-          <button class="btn-action outline" onclick="Orbita.copiar(window.location.href)">
-            Compartilhar
+          <button class="btn-action outline" onclick="window.location.href='mensagens.html?conversa=${u.id}&nome=${u.nome}&handle=${u.handle}&avatar=${u.avatar || '🙂'}'">
+          💬 Mensagem
           </button>
         `;
       }
