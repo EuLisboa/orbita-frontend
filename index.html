@@ -466,6 +466,71 @@
       line-height: 1.6;
     }
 
+    .stats-section {
+  padding: 60px 0 100px;
+}
+
+.stats-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 56px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.stats-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(232,255,90,0.15), transparent 50%, rgba(90,255,184,0.1));
+  z-index: 0;
+  pointer-events: none;
+}
+
+.stats-card > * { position: relative; z-index: 1; }
+
+.stats-label {
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent2);
+  margin-bottom: 40px;
+  font-weight: 500;
+}
+
+.stats-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: wrap;
+}
+
+.stat-item { padding: 0 48px; }
+
+.stat-num {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -2px;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.stat-desc {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.stat-divider {
+  width: 1px;
+  height: 60px;
+  background: var(--border);
+}
+
     /* =============================================
        SEÇÃO DE CADASTRO
     ============================================= */
@@ -566,6 +631,21 @@
 
   </style>
 </head>
+<script>
+  // Busca estatísticas reais da API
+  fetch('https://orbita-backend-production.up.railway.app/api/stats')
+    .then(r => r.json())
+    .then(d => {
+      document.getElementById('stat-usuarios').textContent    = d.usuarios    || d.users    || 0;
+      document.getElementById('stat-posts').textContent       = d.posts       || 0;
+      document.getElementById('stat-comunidades').textContent = d.comunidades || d.communities || 0;
+    })
+    .catch(() => {
+      document.getElementById('stat-usuarios').textContent    = '0';
+      document.getElementById('stat-posts').textContent       = '0';
+      document.getElementById('stat-comunidades').textContent = '0';
+    });
+</script>
 <body>
 
   <!-- Fundo com brilhos animados -->
@@ -733,23 +813,33 @@
     </section>
   </div>
 
-  <!-- ============================================
-       CADASTRO
-  ============================================= -->
-  <div class="container" id="cadastro">
-    <section class="signup-section">
-      <div class="signup-card">
-        <div class="section-label">Comece agora</div>
-        <h2>Crie sua conta<br/>gratuitamente</h2>
-        <p>Digite seu e-mail e embarque no Orbita.</p>
-
-        <div class="form-row">
-          <input type="email" placeholder="seu@email.com"/>
-          <a href="login.html" class="btn btn-primary">✦ Criar minha conta</a>
+  <!-- ESTATÍSTICAS -->
+<div class="container" id="stats">
+  <section class="stats-section">
+    <div class="stats-card">
+      <div class="stats-label">✦ Orbita em números</div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-num" id="stat-usuarios">...</div>
+          <div class="stat-desc">usuários</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-num" id="stat-posts">...</div>
+          <div class="stat-desc">posts publicados</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-num" id="stat-comunidades">...</div>
+          <div class="stat-desc">comunidades ativas</div>
         </div>
       </div>
-    </section>
-  </div>
+      <a href="login.html" class="btn btn-primary" style="margin-top:32px">
+        ✦ Fazer parte dessa órbita
+      </a>
+    </div>
+  </section>
+</div>
 
   <!-- ============================================
        RODAPÉ
@@ -758,7 +848,7 @@
     <footer>
       <div class="footer-logo">✦ Orbita</div>
       <div class="footer-text">Feito com 💛 — projeto em desenvolvimento</div>
-      <div class="footer-text">© 2025 Orbita</div>
+      <div class="footer-text">© 2026Orbita</div>
     </footer>
   </div>
 
