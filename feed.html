@@ -350,6 +350,12 @@
         🔔
        <span class="notif-badge" id="notif-badge" style="display:none"></span>
        </button>
+       <button class="nav-icon-btn" title="Mensagens"
+        onclick="window.location.href='mensagens.html'"
+        id="btn-msgs" style="position:relative">
+        💬
+       <span class="notif-badge" id="msgs-badge" style="display:none"></span>
+       </button>
        <a href="perfil.html" class="nav-avatar" id="nav-avatar">🙂</a>
        <button class="nav-btn" onclick="Orbita.auth.logout()">Sair</button>
       </div>
@@ -447,12 +453,6 @@
         </button>
         <button class="modal-close" onclick="fecharModal('modal-notif')">✕</button>
       </div>
-      <button class="nav-icon-btn" title="Mensagens"
-        onclick="window.location.href='mensagens.html'"
-        id="btn-msgs" style="position:relative">
-       💬
-      <span class="notif-badge" id="msgs-badge" style="display:none"></span>
-      </button>
     </div>
     <div class="modal-body" style="padding:0">
       <div id="notif-lista"></div>
@@ -983,6 +983,10 @@ async function verificarMensagens() {
     }
   } catch (e) {}
 }
+
+// Verifica notificações e mensagens ao carregar
+verificarNotificacoes();
+setInterval(verificarNotificacoes, 30000);
 
 verificarMensagens();
 setInterval(verificarMensagens, 30000);
