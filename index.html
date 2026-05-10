@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Orbita — Sua rede social</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>  
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23e8ff5a'/><text x='50' y='68' text-anchor='middle' font-size='55' fill='%23000'>✦</text></svg>"/>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml"/>
   <style>
     /* =============================================
        VARIÁVEIS DE COR E TEMA
@@ -640,7 +640,7 @@
 </head>
 <script>
   // Busca estatísticas reais da API
-  fetch('https://orbita-backend-production.up.railway.app/api/stats')
+  fetch('https://gloquvrrkbswfyeeciwl.supabase.chttps://gloquvrrkbswfyeeciwl.supabase.co/rest/v1/oesb_secret_JOJDQ0paT-QnFkHxOQAK1A_YNOvem4lyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdsb3F1dnJya2Jzd2Z5ZWVjaXdsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NzU3NTU4MCwiZXhwIjoyMDkzMTUxNTgwfQ.lQ6_ekvg9qXSNd4Vg4CWy8cVxMeeFhUJod45n3g80-0')
     .then(r => r.json())
     .then(d => {
       document.getElementById('stat-usuarios').textContent    = d.usuarios    || d.users    || 0;
@@ -679,7 +679,7 @@
   <div class="container">
     <section class="hero">
       <div class="hero-badge">
-        ✦ <span>Nova rede social</span> — conecte-se de verdade
+        <span>Nova rede social</span> - conecte-se de verdade
       </div>
 
       <h1>
@@ -694,69 +694,41 @@
 
       <div class="btn-group">
         <a href="login.html" class="btn btn-primary">
-          ✦ Criar minha conta
+           Criar minha conta
         </a>
         <a href="#funcionalidades" class="btn btn-secondary">
           Ver funcionalidades
         </a>
       </div>
 
-      <!-- Mockup do app -->
-      <div class="app-preview">
-        <div class="app-bar">
-          <div class="app-dots">
-            <span></span><span></span><span></span>
-          </div>
-          <div class="app-url">orbita.app/feed</div>
+        <div class="container" id="stats">
+  <section class="stats-section">
+    <div class="stats-card">
+      <div class="stats-label">Orbita em números</div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-num" id="stat-usuarios">...</div>
+          <div class="stat-desc">usuários</div>
         </div>
-        <div class="mock-feed">
-
-          <!-- Post simulado 1 -->
-          <div class="mock-post">
-            <svg class="mock-avatar" viewBox="0 0 38 38">
-              <circle cx="19" cy="19" r="19" fill="#2a2a35"/>
-              <circle cx="19" cy="15" r="7" fill="#e8ff5a" opacity="0.8"/>
-              <ellipse cx="19" cy="32" rx="12" ry="8" fill="#e8ff5a" opacity="0.4"/>
-            </svg>
-            <div class="mock-content">
-              <div class="mock-name">Ana Paula</div>
-              <div class="mock-text">Acabei de entrar no Orbita! Alguém mais aqui da comunidade de design? 🎨</div>
-            </div>
-          </div>
-
-          <!-- Post simulado 2 -->
-          <div class="mock-post">
-            <svg class="mock-avatar" viewBox="0 0 38 38">
-              <circle cx="19" cy="19" r="19" fill="#1e2a1e"/>
-              <circle cx="19" cy="15" r="7" fill="#5affb8" opacity="0.8"/>
-              <ellipse cx="19" cy="32" rx="12" ry="8" fill="#5affb8" opacity="0.4"/>
-            </svg>
-            <div class="mock-content">
-              <div class="mock-name">Carlos Dev</div>
-              <div class="mock-text">Entrei na comunidade "Programadores BR" — que saudade dessa vibe do Orkut 🚀</div>
-            </div>
-          </div>
-
-          <!-- Post simulado 3 -->
-          <div class="mock-post">
-            <svg class="mock-avatar" viewBox="0 0 38 38">
-              <circle cx="19" cy="19" r="19" fill="#2a1e2a"/>
-              <circle cx="19" cy="15" r="7" fill="#ff5a8a" opacity="0.8"/>
-              <ellipse cx="19" cy="32" rx="12" ry="8" fill="#ff5a8a" opacity="0.4"/>
-            </svg>
-            <div class="mock-content">
-              <div class="mock-name">Letícia M.</div>
-              <div class="mock-text">Atualizei meu perfil! Passem lá pra me adicionar 💫</div>
-              <div class="mock-bar long"></div>
-            </div>
-          </div>
-
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-num" id="stat-posts">...</div>
+          <div class="stat-desc">posts publicados</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-num" id="stat-comunidades">...</div>
+          <div class="stat-desc">comunidades ativas</div>
         </div>
       </div>
-    </section>
-  </div>
+      <a href="login.html" class="btn btn-primary" style="margin-top:32px">
+        Fazer parte dessa órbita
+      </a>
+    </div>
+  </section>
+</div>
 
-  <!-- ============================================
+<!-- ============================================
        FUNCIONALIDADES
   ============================================= -->
   <div class="container" id="funcionalidades">
@@ -818,40 +790,67 @@
     </section>
   </div>
 
-  <!-- ESTATÍSTICAS -->
-<div class="container" id="stats">
-  <section class="stats-section">
-    <div class="stats-card">
-      <div class="stats-label">✦ Orbita em números</div>
-      <div class="stats-grid">
-        <div class="stat-item">
-          <div class="stat-num" id="stat-usuarios">...</div>
-          <div class="stat-desc">usuários</div>
+      <!-- Mockup do app -->
+      <div class="app-preview">
+        <div class="app-bar">
+          <div class="app-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="app-url">orbita.app/feed</div>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <div class="stat-num" id="stat-posts">...</div>
-          <div class="stat-desc">posts publicados</div>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <div class="stat-num" id="stat-comunidades">...</div>
-          <div class="stat-desc">comunidades ativas</div>
+        <div class="mock-feed">
+
+          <!-- Post simulado 1 -->
+          <div class="mock-post">
+            <svg class="mock-avatar" viewBox="0 0 38 38">
+              <circle cx="19" cy="19" r="19" fill="#2a2a35"/>
+              <circle cx="19" cy="15" r="7" fill="#e8ff5a" opacity="0.8"/>
+              <ellipse cx="19" cy="32" rx="12" ry="8" fill="#e8ff5a" opacity="0.4"/>
+            </svg>
+            <div class="mock-content">
+              <div class="mock-name">Ana Paula</div>
+              <div class="mock-text">Acabei de entrar no Orbita! Alguém mais aqui da comunidade de design? 🎨</div>
+            </div>
+          </div>
+
+          <!-- Post simulado 2 -->
+          <div class="mock-post">
+            <svg class="mock-avatar" viewBox="0 0 38 38">
+              <circle cx="19" cy="19" r="19" fill="#1e2a1e"/>
+              <circle cx="19" cy="15" r="7" fill="#5affb8" opacity="0.8"/>
+              <ellipse cx="19" cy="32" rx="12" ry="8" fill="#5affb8" opacity="0.4"/>
+            </svg>
+            <div class="mock-content">
+              <div class="mock-name">Carlos Dev</div>
+              <div class="mock-text">Entrei na comunidade "Programadores BR" — que saudade dessa vibe do Orkut 🚀</div>
+            </div>
+          </div>
+
+          <!-- Post simulado 3 -->
+          <div class="mock-post">
+            <svg class="mock-avatar" viewBox="0 0 38 38">
+              <circle cx="19" cy="19" r="19" fill="#2a1e2a"/>
+              <circle cx="19" cy="15" r="7" fill="#ff5a8a" opacity="0.8"/>
+              <ellipse cx="19" cy="32" rx="12" ry="8" fill="#ff5a8a" opacity="0.4"/>
+            </svg>
+            <div class="mock-content">
+              <div class="mock-name">Letícia M.</div>
+              <div class="mock-text">Atualizei meu perfil! Passem lá pra me adicionar 💫</div>
+              <div class="mock-bar long"></div>
+            </div>
+          </div>
+
         </div>
       </div>
-      <a href="login.html" class="btn btn-primary" style="margin-top:32px">
-        ✦ Fazer parte dessa órbita
-      </a>
-    </div>
-  </section>
-</div>
+    </section>
+  </div>
 
-  <!-- ============================================
+<!-- ============================================
        RODAPÉ
   ============================================= -->
   <div class="container">
     <footer>
-      <div class="footer-logo">✦ Orbita</div>
+      <div class="footer-logo">Orbita</div>
       <div class="footer-text">Feito com 💛 — projeto em desenvolvimento</div>
       <div class="footer-text">© 2023 Orbita</div>
     </footer>
