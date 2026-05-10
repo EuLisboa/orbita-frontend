@@ -191,6 +191,12 @@
       </div>
 
       <div class="field">
+        <label for="cad-data-nascimento">Data de nascimento</label>
+        <input type="date" id="cad-data-nascimento"/>
+        <div class="field-error" id="err-cad-data-nascimento">Você precisa ter pelo menos 16 anos</div>
+      </div>
+
+      <div class="field">
         <label for="cad-senha">Senha</label>
         <input type="password" id="cad-senha" placeholder="mínimo 6 caracteres"
                oninput="checkPasswordStrength(this.value)"/>
@@ -267,9 +273,9 @@
         // fetch() faz a requisição HTTP para a API
         // ----------------------------------------
         const resposta = await fetch(`${API_URL}/api/auth/login`, {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ email, senha }),
+         method:  'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body:    JSON.stringify({ email, senha }),
         });
 
         const dados = await resposta.json();
@@ -300,7 +306,26 @@
         btn.textContent = 'Entrar na minha conta →';
       }
     }
+    
+    // ==========================================
+    // Função auxiliar — idade mínima
+   // ==========================================
+   function tem16AnosOuMais(dataNascimento) {
+    const nascimento = new Date(dataNascimento);
+    if (Number.isNaN(nascimento.getTime())) {
+    return false;
+  }
 
+  const hoje = new Date();
+  let idade = hoje.getFullYear() - nascimento.getFullYear();
+  const mes = hoje.getMonth() - nascimento.getMonth();
+
+  if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+    idade--;
+  }
+
+  return idade >= 16;
+}
 
     // ==========================================
     // CADASTRO — chama a API real
@@ -309,6 +334,7 @@
       const nome      = document.getElementById('cad-nome').value.trim();
       const sobrenome = document.getElementById('cad-sobrenome').value.trim();
       const email     = document.getElementById('cad-email').value.trim();
+      const dataNascimento = document.getElementById('cad-data-nascimento').value;
       const senha     = document.getElementById('cad-senha').value;
       const btn       = document.getElementById('btn-cadastro');
       const erro      = document.getElementById('erro-cadastro');
@@ -326,6 +352,13 @@
         document.getElementById('err-cad-email').classList.add('visible');
         valido = false;
       }
+
+      if (!tem16AnosOuMais(dataNascimento)) {
+        document.getElementById('cad-data-nascimento').classList.add('error');
+        document.getElementById('err-cad-data-nascimento').classList.add('visible');
+        valido = false;
+      }
+
 
       if (senha.length < 6) {
         document.getElementById('cad-senha').classList.add('error');
@@ -345,7 +378,11 @@
         const resposta = await fetch(`${API_URL}/api/auth/cadastro`, {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ nome: nomeCompleto, email, senha }),
+          body:    JSON.stringify({ 
+            nome: nomeCompleto, 
+            email, 
+            senha,
+            data_nascimento: dataNascimento }),
         });
 
         const dados = await resposta.json();
